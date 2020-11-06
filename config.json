@@ -1,0 +1,5 @@
+{
+    "marialdb": {
+        "data_soruce_name": "cpuser:111111@tcp(localhost:3306)/costperfect?parseTime=true"
+    }
+}
