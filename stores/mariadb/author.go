@@ -145,6 +145,9 @@ func (a Author) FindByID(id int64) (models.Author, error) {
 	}
 	defer stmt.Close()
 	if err := stmt.QueryRowContext(ctx, id).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return ma, errors.New(`Author not found`)
+		}
 		return ma, err
 	}
 	return ma, nil
@@ -168,6 +171,9 @@ func (a Author) FindByUsername(username string) (models.Author, error) {
 	}
 	defer stmt.Close()
 	if err = stmt.QueryRowContext(ctx, username).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return ma, errors.New(`Author not found`)
+		}
 		return ma, err
 	}
 	return ma, nil

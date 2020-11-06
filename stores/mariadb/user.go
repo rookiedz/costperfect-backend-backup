@@ -187,6 +187,9 @@ func (u User) FindByID(id int64) (models.User, error) {
 	}
 	defer stmt.Close()
 	if err = stmt.QueryRowContext(ctx, id).Scan(&mu.ID, &mu.EmployeeID, &mu.Name, &mu.Address, &mu.Telephone, &mu.Deleted, &mu.CreatedAt, &mu.UpdatedAt, &mu.DeletedAt); err != nil {
+		if err == sql.ErrNoRows {
+			return mu, errors.New(`User not found`)
+		}
 		return mu, err
 	}
 	return mu, nil

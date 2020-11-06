@@ -9,7 +9,6 @@ import (
 func User(r *http.Request) (models.User, map[string]bool, error) {
 	var input models.User
 	var fields map[string]bool
-	var err error
 
 	fields = make(map[string]bool)
 	if ok := r.PostForm["employee_id"]; ok != nil {
@@ -28,5 +27,5 @@ func User(r *http.Request) (models.User, map[string]bool, error) {
 		input.Telephone = r.PostFormValue("telephone")
 		fields["telephone"] = true
 	}
-	return input, fields, err
+	return input, fields, nil
 }
