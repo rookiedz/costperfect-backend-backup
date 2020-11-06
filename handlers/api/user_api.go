@@ -106,6 +106,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
 		return
 	}
+	if mUser == (models.User{}) {
+		JSON(w, http.StatusOK, NewEntry("success", "", NewNotFound("user")))
+		return
+	}
 	res = make(map[string]models.User)
 	res["user"] = mUser
 	JSON(w, http.StatusOK, NewEntry("success", "", res))

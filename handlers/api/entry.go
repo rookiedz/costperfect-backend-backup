@@ -17,3 +17,14 @@ func NewEmptyEntry(status string, message string) Entry {
 	var data []string
 	return Entry{Status: status, Message: message, Data: data}
 }
+
+//NotFound ...
+type NotFound struct{}
+
+//NewNotFound ...
+func NewNotFound(entry string) map[string]NotFound {
+	var data map[string]NotFound
+	data = make(map[string]NotFound)
+	data[entry] = NotFound{}
+	return data
+}

@@ -106,6 +106,10 @@ func GetAuthor(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
 		return
 	}
+	if mAuthor == (models.Author{}) {
+		JSON(w, http.StatusOK, NewEntry("success", "", NewNotFound("author")))
+		return
+	}
 	res = make(map[string]models.Author)
 	res["author"] = mAuthor
 	JSON(w, http.StatusOK, NewEntry("success", "", res))

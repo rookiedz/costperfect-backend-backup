@@ -133,7 +133,6 @@ func (a Author) FindByID(id int64) (models.Author, error) {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
-
 	var ma models.Author
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
@@ -146,7 +145,7 @@ func (a Author) FindByID(id int64) (models.Author, error) {
 	defer stmt.Close()
 	if err := stmt.QueryRowContext(ctx, id).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
 		if err == sql.ErrNoRows {
-			return ma, errors.New(`Author not found`)
+			return ma, nil
 		}
 		return ma, err
 	}
@@ -159,7 +158,6 @@ func (a Author) FindByUsername(username string) (models.Author, error) {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
-
 	var ma models.Author
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
@@ -172,7 +170,7 @@ func (a Author) FindByUsername(username string) (models.Author, error) {
 	defer stmt.Close()
 	if err = stmt.QueryRowContext(ctx, username).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
 		if err == sql.ErrNoRows {
-			return ma, errors.New(`Author not found`)
+			return ma, nil
 		}
 		return ma, err
 	}
@@ -191,9 +189,9 @@ func (a Author) FindAll(setters ...Option) ([]models.Author, error) {
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var rows *sql.Rows
-
 	var mas []models.Author
 
+	mas = []models.Author{}
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -222,5 +220,5 @@ func (a Author) FindAll(setters ...Option) ([]models.Author, error) {
 	if err = rows.Err(); err != nil {
 		return mas, err
 	}
-	return []models.Author{}, nil
+	return mas, nil
 }
