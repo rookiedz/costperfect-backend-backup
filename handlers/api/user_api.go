@@ -1,6 +1,8 @@
 package api
 
-import "net/http"
+import (
+	"net/http"
+)
 
 //CreateUser ...
 func CreateUser(w http.ResponseWriter, r *http.Request) {}

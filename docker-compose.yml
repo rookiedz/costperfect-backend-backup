@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 111111
+      MYSQL_USER: cpuser
+      MYSQL_PASSWORD: 111111
+      MYSQL_DATABASE: costperfect
+    volumes:
+      - db_vol:/var/lib/mysql
+    networks:
+      - default
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    depends_on:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: 111111
+    ports:
+      - 8001:80
+    networks:
+      - default
+volumes:
+  db_vol:
