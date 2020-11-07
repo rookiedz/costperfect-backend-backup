@@ -15,7 +15,7 @@ func UserAPI() http.Handler {
 		r.Get("/", handlers.GetUsers)
 		r.Post("/", handlers.CreateUser)
 	})
-	r.Route("/{id:[1-9]+}", func(r chi.Router) {
+	r.Route("/{id:[0-9]+}", func(r chi.Router) {
 		r.Get("/", handlers.GetUser)
 		r.Put("/", handlers.UpdateUser)
 		r.Delete("/", handlers.DeleteUser)

@@ -46,7 +46,7 @@ func (u User) Create(user models.User) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s SET (user_employee_id, user_name, user_address, user_telephone, user_created_at, user_updated_at)VALUES(?,?,?,?,?,?,?,?)`, u.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (user_employee_id, user_name, user_address, user_telephone, user_created_at, user_updated_at)VALUES(?, ?, ?, ?, ?, ?)`, u.TableName))
 	if err != nil {
 		return 0, err
 	}

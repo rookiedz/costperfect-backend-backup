@@ -1,10 +1,11 @@
 package api
 
 import (
-	"costperfect/handlers/api/bind"
 	"costperfect/handlers/api/match"
 	"costperfect/models"
 	"costperfect/stores/mariadb"
+	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -18,16 +19,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var lastID int64
 	var res map[string]int64
 
-	r.ParseForm()
-	input, _, err = bind.User(r)
-	if err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
-		return
+	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
+		log.Println(err.Error())
 	}
 	mdbUser = mariadb.NewUser()
 	lastID, err = mdbUser.Create(input)
 	if err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
 	res = make(map[string]int64)
@@ -48,8 +46,10 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
 		return
 	}
-	r.ParseForm()
-	input, fields, err = bind.User(r)
+	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
+		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		return
+	}
 	if err != nil {
 		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
 		return
