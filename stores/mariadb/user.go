@@ -3,6 +3,7 @@ package mariadb
 import (
 	"context"
 	"costperfect/models"
+	"costperfect/utility/convert"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -111,6 +112,41 @@ func (u User) Delete(id int64) error {
 	defer stmt.Close()
 
 	res, err = stmt.ExecContext(ctx, id)
+	if err != nil {
+		return err
+	}
+	no, err = res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if no < 1 {
+		return errors.New(`Can't delete user`)
+	}
+	return nil
+}
+
+//DeleteByIDs ...
+func (u User) DeleteByIDs(ids []int64) error {
+	var err error
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var res sql.Result
+	var no int64
+	var idsString string
+
+	idsString = convert.ArrayInt64ToString(ids, ",")
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE user_id IN (%s)`, u.TableName, idsString))
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	res, err = stmt.ExecContext(ctx)
 	if err != nil {
 		return err
 	}

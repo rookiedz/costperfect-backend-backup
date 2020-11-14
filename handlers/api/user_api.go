@@ -5,7 +5,6 @@ import (
 	"costperfect/models"
 	"costperfect/stores/mariadb"
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -20,7 +19,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var res map[string]int64
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		log.Println(err.Error())
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
+		return
 	}
 	mdbUser = mariadb.NewUser()
 	lastID, err = mdbUser.Create(input)
@@ -43,29 +43,29 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
 		return
 	}
 	if err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	mUser, err = mdbUser.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
 	match.User(&mUser, input, fields)
 	if err = mdbUser.Update(id, mUser); err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
-	JSON(w, http.StatusNoContent, NewEmptyEntry("success", ""))
+	JSON(w, http.StatusOK, NewEmptyEntry("success", ""))
 }
 
 //DeleteUser ...
@@ -76,15 +76,33 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	if err = mdbUser.Delete(id); err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
-	JSON(w, http.StatusNoContent, NewEmptyEntry("success", ""))
+	JSON(w, http.StatusOK, NewEmptyEntry("success", ""))
+}
+
+//DeleteUsers ...
+func DeleteUsers(w http.ResponseWriter, r *http.Request) {
+	var ids models.IDs
+	var err error
+	var mdbUser mariadb.User
+
+	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
+		return
+	}
+	mdbUser = mariadb.NewUser()
+	if err = mdbUser.DeleteByIDs(ids.IDs); err != nil {
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
+		return
+	}
+	JSON(w, http.StatusOK, NewEmptyEntry("success", ""))
 }
 
 //GetUser ...
@@ -97,13 +115,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusBadRequest, NewEmptyEntry("fail", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("fail", err.Error()))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	mUser, err = mdbUser.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
 	if mUser == (models.User{}) {
@@ -125,7 +143,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	mdbUser = mariadb.NewUser()
 	mUsers, err = mdbUser.FindAll()
 	if err != nil {
-		JSON(w, http.StatusInternalServerError, NewEmptyEntry("error", err.Error()))
+		JSON(w, http.StatusOK, NewEmptyEntry("error", err.Error()))
 		return
 	}
 	res = make(map[string][]models.User)
