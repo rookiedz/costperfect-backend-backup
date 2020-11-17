@@ -1,6 +1,6 @@
 package match
 
-import "costperfect/models"
+import "costperfect/backend/models"
 
 //Author ...
 func Author(author *models.Author, input models.Author, fields map[string]bool) {

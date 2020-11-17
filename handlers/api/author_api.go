@@ -1,10 +1,10 @@
 package api
 
 import (
-	"costperfect/handlers/api/bind"
-	"costperfect/handlers/api/match"
-	"costperfect/models"
-	"costperfect/stores/mariadb"
+	"costperfect/backend/handlers/api/bind"
+	"costperfect/backend/handlers/api/match"
+	"costperfect/backend/models"
+	"costperfect/backend/stores/mariadb"
 	"net/http"
 
 	"github.com/go-chi/chi"

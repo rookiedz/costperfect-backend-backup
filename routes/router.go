@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"costperfect/routes/api"
+	"costperfect/backend/routes/api"
 	"net/http"
 
 	"github.com/go-chi/chi"

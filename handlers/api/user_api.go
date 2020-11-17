@@ -1,9 +1,9 @@
 package api
 
 import (
-	"costperfect/handlers/api/match"
-	"costperfect/models"
-	"costperfect/stores/mariadb"
+	"costperfect/backend/handlers/api/match"
+	"costperfect/backend/models"
+	"costperfect/backend/stores/mariadb"
 	"encoding/json"
 	"net/http"
 

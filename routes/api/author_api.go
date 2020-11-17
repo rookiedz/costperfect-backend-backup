@@ -1,7 +1,7 @@
 package api
 
 import (
-	handlers "costperfect/handlers/api"
+	handlers "costperfect/backend/handlers/api"
 	"net/http"
 
 	"github.com/go-chi/chi"

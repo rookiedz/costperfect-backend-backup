@@ -1,7 +1,7 @@
 package bind
 
 import (
-	"costperfect/models"
+	"costperfect/backend/models"
 	"net/http"
 )
 

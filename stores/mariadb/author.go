@@ -2,7 +2,7 @@ package mariadb
 
 import (
 	"context"
-	"costperfect/models"
+	"costperfect/backend/models"
 	"database/sql"
 	"errors"
 	"fmt"

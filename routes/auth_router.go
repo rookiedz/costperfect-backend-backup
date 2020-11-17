@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"costperfect/handlers"
+	"costperfect/backend/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi"

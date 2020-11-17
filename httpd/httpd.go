@@ -1,9 +1,9 @@
 package httpd
 
 import (
-	"costperfect/config"
-	"costperfect/routes"
-	"costperfect/stores/mariadb"
+	"costperfect/backend/config"
+	"costperfect/backend/routes"
+	"costperfect/backend/stores/mariadb"
 	"log"
 	"net/http"
 	"time"

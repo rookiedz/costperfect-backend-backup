@@ -1,6 +1,6 @@
 package main
 
-import "costperfect/httpd"
+import "costperfect/backend/httpd"
 
 func main() {
 	httpd.Start()
