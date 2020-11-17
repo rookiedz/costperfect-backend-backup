@@ -16,7 +16,7 @@ func ID64(i string) (int64, error) {
 }
 
 //JSON ...
-func JSON(w http.ResponseWriter, status int, entry Entry) {
+func JSON(w http.ResponseWriter, status int, entry interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(entry)
