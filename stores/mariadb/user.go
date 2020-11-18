@@ -3,7 +3,6 @@ package mariadb
 import (
 	"context"
 	"costperfect/backend/models"
-	"costperfect/backend/utility/convert"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -135,7 +134,7 @@ func (u User) DeleteByIDs(ids []int64) error {
 	var no int64
 	var idsString string
 
-	idsString = convert.ArrayInt64ToString(ids, ",")
+	idsString = ArrayInt64ToString(ids, ",")
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
