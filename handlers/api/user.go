@@ -28,7 +28,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res = make(map[string]int64)
-	res["id"] = lastID
+	res["last_id"] = lastID
 	JSON(w, http.StatusOK, Success("users", res))
 }
 
