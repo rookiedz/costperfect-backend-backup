@@ -1,105 +1,139 @@
 package api
 
 import (
+	"costperfect/backend/handlers/api/input"
 	"costperfect/backend/models"
 	"costperfect/backend/stores/mariadb"
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"gopkg.in/go-playground/validator.v9"
 )
 
-//CreateUser ...
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+//User ...
+type User struct {
+	Endpoint string
+}
+
+//NewUser ...
+func NewUser() User {
+	return User{Endpoint: "users"}
+}
+
+//Create ...
+func (u User) Create(w http.ResponseWriter, r *http.Request) {
 	var input models.User
 	var mdbUser mariadb.User
+	var ok bool
 	var err error
 	var lastID int64
 	var res map[string]int64
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
+		if err == io.EOF {
+			JSON(w, http.StatusOK, Failure(u.Endpoint, err))
+			return
+		}
+		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
+	}
+
+	if err = validate.Struct(input); err != nil {
+		if _, ok = err.(*validator.InvalidValidationError); ok {
+			JSON(w, http.StatusOK, Err(u.Endpoint, err))
+			return
+		}
 	}
 	mdbUser = mariadb.NewUser()
 	lastID, err = mdbUser.Create(input)
 	if err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success("users", res))
+	JSON(w, http.StatusOK, Success(u.Endpoint, res))
 }
 
-//UpdateUser ...
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var input models.User
+//Update ...
+func (u User) Update(w http.ResponseWriter, r *http.Request) {
+	var input input.User
+	var mUser models.User
 	var mdbUser mariadb.User
 	var err error
+	var ok bool
 	var id int64
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
+		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
+		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
 	}
-	if err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
-		return
+	if err = validate.Struct(input); err != nil {
+		if _, ok = err.(*validator.InvalidValidationError); ok {
+			JSON(w, http.StatusOK, Failure(u.Endpoint, err))
+			return
+		}
 	}
 	mdbUser = mariadb.NewUser()
-	_, err = mdbUser.FindByID(id)
+	mUser, err = mdbUser.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success("users", NewEmptyData()))
+	input.Match(&mUser)
+	if err = mdbUser.Update(id, mUser); err != nil {
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
+		return
+	}
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
-//DeleteUser ...
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
+//Delete ...
+func (u User) Delete(w http.ResponseWriter, r *http.Request) {
 	var id int64
 	var err error
 	var mdbUser mariadb.User
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
+		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	if err = mdbUser.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success("users", NewEmptyData()))
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
-//DeleteUsers ...
-func DeleteUsers(w http.ResponseWriter, r *http.Request) {
+//DeleteByIDs ...
+func (u User) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	var ids models.IDs
 	var err error
 	var mdbUser mariadb.User
 
 	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	if err = mdbUser.DeleteByIDs(ids.IDs); err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success("users", NewEmptyData()))
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
-//GetUser ...
-func GetUser(w http.ResponseWriter, r *http.Request) {
+//Get ...
+func (u User) Get(w http.ResponseWriter, r *http.Request) {
 	var mUser models.User
 	var mdbUser mariadb.User
 	var id int64
@@ -107,13 +141,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure("users", err))
+		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
 	}
 	mdbUser = mariadb.NewUser()
 	mUser, err = mdbUser.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
 	if mUser == (models.User{}) {
@@ -123,8 +157,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, Success("success", mUser))
 }
 
-//GetUsers ...
-func GetUsers(w http.ResponseWriter, r *http.Request) {
+//All ...
+func (u User) All(w http.ResponseWriter, r *http.Request) {
 	var mUsers []models.User
 	var mdbUser mariadb.User
 	var err error
@@ -132,8 +166,8 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	mdbUser = mariadb.NewUser()
 	mUsers, err = mdbUser.FindAll()
 	if err != nil {
-		JSON(w, http.StatusOK, Err("users", err))
+		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success("users", mUsers))
+	JSON(w, http.StatusOK, Success(u.Endpoint, mUsers))
 }

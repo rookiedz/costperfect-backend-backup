@@ -20,6 +20,8 @@ func InitialRouter() http.Handler {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
+
+	api.Initial()
 	r.Route("/api", func(r chi.Router) {
 		r.Mount("/users", api.UserAPI())
 		r.Mount("/authors", api.AuthorAPI())

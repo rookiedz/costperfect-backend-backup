@@ -102,6 +102,29 @@ func (c Contractor) Delete(id int64) error {
 	return nil
 }
 
+//DeleteByIDs ...
+func (c Contractor) DeleteByIDs(ids []int64) error {
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var err error
+	var idsString string
+
+	idsString = ArrayInt64ToString(ids, ",")
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE contractor_id IN (%s)`, c.TableName, idsString))
+	if err != nil {
+		return err
+	}
+	if _, err = stmt.ExecContext(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
 //FindByID ...
 func (c Contractor) FindByID(id int64) (models.Contractor, error) {
 	var mContractor models.Contractor
