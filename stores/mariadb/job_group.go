@@ -9,57 +9,56 @@ import (
 	"time"
 )
 
-//Job ...
-type Job struct {
+//JobGroup ...
+type JobGroup struct {
 	TableName   string
 	Columns     []string
 	QueryColumn string
 }
 
-//NewJob ...
-func NewJob() Job {
+//NewJobGroup ...
+func NewJobGroup() JobGroup {
 	var columns []string
 	columns = []string{
-		"job_id",
-		"job_type_id",
 		"job_group_id",
-		"job_lable",
+		"job_type_id",
+		"job_group_label",
 	}
-	return Job{TableName: "jobs", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
+	return JobGroup{TableName: "job_group", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
 
 //Create ...
-func (j Job) Create(job models.Job) (int64, error) {
+func (jg JobGroup) Create(jobGroup models.JobGroup) (int64, error) {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var res sql.Result
-	var err error
 	var lastID int64
+	var err error
 	var cds string
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_id, group_label, job_created_at, job_updated_at)VALUES(?,?,?,?,?)`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_label, job_group_created_at, job_group_updated_at)VALUES(?, ?, ?, ?)`, jg.TableName))
 	if err != nil {
-		return 0, err
+		return lastID, err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Label, cds, cds)
+	res, err = stmt.ExecContext(ctx, jobGroup.TypeID, jobGroup.Label, cds, cds)
 	if err != nil {
-		return 0, err
+		return lastID, err
 	}
 	lastID, err = res.LastInsertId()
 	if err != nil {
-		return 0, err
+		return lastID, err
 	}
 	return lastID, nil
 }
 
 //Update ...
-func (j Job) Update(id int64, job models.Job) error {
+func (jg JobGroup) Update(id int64, jobGroup models.JobGroup) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -69,20 +68,20 @@ func (j Job) Update(id int64, job models.Job) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET job_type_id = ?, job_group_id = ?, job_label = ?, job_updated_at = ? WHERE job_id = ?`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET job_type_id = ?, job_group_label = ?, job_group_updated_at = ? WHERE job_group_id = ?`, jg.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Label, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, jobGroup.TypeID, jobGroup.Label, cds, id); err != nil {
 		return err
 	}
 	return nil
 }
 
 //Delete ...
-func (j Job) Delete(id int64) error {
+func (jg JobGroup) Delete(id int64) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -91,7 +90,7 @@ func (j Job) Delete(id int64) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE job_id = ?`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE job_group_id = ?`, jg.TableName))
 	if err != nil {
 		return err
 	}
@@ -103,7 +102,7 @@ func (j Job) Delete(id int64) error {
 }
 
 //DeleteByIDs ...
-func (j Job) DeleteByIDs(ids []int64) error {
+func (jg JobGroup) DeleteByIDs(ids []int64) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -112,12 +111,14 @@ func (j Job) DeleteByIDs(ids []int64) error {
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
 	idsString = ArrayInt64ToString(ids, ",")
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE job_id IN (%s)`, j.TableName, idsString))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE job_group_id IN (%s)`, jg.TableName, idsString))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
+
 	if _, err = stmt.ExecContext(ctx); err != nil {
 		return err
 	}
@@ -125,8 +126,8 @@ func (j Job) DeleteByIDs(ids []int64) error {
 }
 
 //FindByID ...
-func (j Job) FindByID(id int64) (models.Job, error) {
-	var mJob models.Job
+func (jg JobGroup) FindByID(id int64) (models.JobGroup, error) {
+	var mJobGroup models.JobGroup
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -135,61 +136,62 @@ func (j Job) FindByID(id int64) (models.Job, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE job_id = ?`, j.QueryColumn, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE job_group_id = ?`, jg.QueryColumn, jg.TableName))
 	if err != nil {
-		return mJob, err
+		return mJobGroup, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Label); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
 		if err == sql.ErrNoRows {
-			return mJob, nil
+			return mJobGroup, nil
 		}
-		return mJob, err
+		return mJobGroup, err
 	}
-	return mJob, nil
+	return mJobGroup, nil
 }
 
 //FindAll ...
-func (j Job) FindAll(setters ...Option) ([]models.Job, error) {
+func (jg JobGroup) FindAll(setters ...Option) ([]models.JobGroup, error) {
 	var args *Options
 	var setter Option
 	args = &Options{Offset: 1, Limit: 50}
 	for _, setter = range setters {
 		setter(args)
 	}
-	var mJobs []models.Job
+
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var rows *sql.Rows
+	var mJobGroups []models.JobGroup
 	var err error
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s LIMIT ?, ?`, j.QueryColumn, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s LIMIT ?, ?`, jg.QueryColumn, jg.TableName))
 	if err != nil {
-		return mJobs, err
+		return mJobGroups, err
 	}
 	defer stmt.Close()
 	rows, err = stmt.QueryContext(ctx, args.Offset-1, args.Limit)
 	if err != nil {
-		return mJobs, err
+		return mJobGroups, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var mJob models.Job
-		if err = rows.Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Label); err != nil {
-			return mJobs, err
+		var mJobGroup models.JobGroup
+		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
+			return mJobGroups, err
 		}
-		mJobs = append(mJobs, mJob)
+		mJobGroups = append(mJobGroups, mJobGroup)
 	}
 	if err = rows.Close(); err != nil {
-		return mJobs, err
+		return mJobGroups, err
 	}
 	if err = rows.Err(); err != nil {
-		return mJobs, err
+		return mJobGroups, err
 	}
-	return mJobs, nil
+	return mJobGroups, nil
 }

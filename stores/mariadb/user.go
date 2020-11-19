@@ -26,10 +26,6 @@ func NewUser() User {
 		"user_name",
 		"user_address",
 		"user_telephone",
-		"user_deleted",
-		"user_created_at",
-		"user_updated_at",
-		"user_deleted_at",
 	}
 	return User{TableName: "users", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
@@ -50,6 +46,7 @@ func (u User) Create(user models.User) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	defer stmt.Close()
 	cds = CurrentDatetimeString()
 	res, err = stmt.ExecContext(ctx, user.EmployeeID, user.Name, user.Address, user.Telephone, cds, cds)
 	if err != nil {
@@ -163,7 +160,7 @@ func (u User) DeleteByIDs(ids []int64) error {
 func (u User) FindAll(settings ...Option) ([]models.User, error) {
 	var args *Options
 	var setter Option
-	args = &Options{Offset: 1, Limit: 50, Column: "user_id", Sort: "DESC"}
+	args = &Options{Offset: 1, Limit: 50}
 	for _, setter = range settings {
 		setter(args)
 	}
@@ -172,38 +169,37 @@ func (u User) FindAll(settings ...Option) ([]models.User, error) {
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var rows *sql.Rows
-	var mus []models.User
+	var mUsers []models.User
 
-	mus = []models.User{}
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE user_deleted = 0 ORDER BY %s %s LIMIT ?,?`, u.QueryColumn, u.TableName, args.Column, args.Sort))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE user_deleted = 0 LIMIT ?,?`, u.QueryColumn, u.TableName))
 	if err != nil {
-		return mus, err
+		return mUsers, err
 	}
 	defer stmt.Close()
 
 	rows, err = stmt.QueryContext(ctx, args.Offset-1, args.Limit)
 	if err != nil {
-		return mus, err
+		return mUsers, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var mu models.User
-		if err = rows.Scan(&mu.ID, &mu.EmployeeID, &mu.Name, &mu.Address, &mu.Telephone, &mu.Deleted, &mu.CreatedAt, &mu.UpdatedAt, &mu.DeletedAt); err != nil {
-			return mus, err
+		var mUser models.User
+		if err = rows.Scan(&mUser.ID, &mUser.EmployeeID, &mUser.Name, &mUser.Address, &mUser.Telephone); err != nil {
+			return mUsers, err
 		}
-		mus = append(mus, mu)
+		mUsers = append(mUsers, mUser)
 	}
 	if err = rows.Close(); err != nil {
-		return mus, err
+		return mUsers, err
 	}
 	if err = rows.Err(); err != nil {
-		return mus, err
+		return mUsers, err
 	}
-	return mus, nil
+	return mUsers, nil
 }
 
 //FindByID ...
@@ -212,21 +208,21 @@ func (u User) FindByID(id int64) (models.User, error) {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
-	var mu models.User
+	var mUser models.User
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE user_deleted = 0 AND user_id = ?`, u.QueryColumn, u.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE user_id = ?`, u.QueryColumn, u.TableName))
 	if err != nil {
-		return mu, err
+		return mUser, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mu.ID, &mu.EmployeeID, &mu.Name, &mu.Address, &mu.Telephone, &mu.Deleted, &mu.CreatedAt, &mu.UpdatedAt, &mu.DeletedAt); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mUser.ID, &mUser.EmployeeID, &mUser.Name, &mUser.Address, &mUser.Telephone); err != nil {
 		if err == sql.ErrNoRows {
-			return mu, nil
+			return mUser, nil
 		}
-		return mu, err
+		return mUser, err
 	}
-	return mu, nil
+	return mUser, nil
 }

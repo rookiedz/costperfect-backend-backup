@@ -75,6 +75,7 @@ func (c Contractor) Update(id int64, contractor models.Contractor) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	cds = CurrentDatetimeString()
 	if _, err = stmt.ExecContext(ctx, contractor.Name, contractor.NameEng, contractor.Address, contractor.Telephone, contractor.Fax, cds, id); err != nil {
 		return err
@@ -96,6 +97,7 @@ func (c Contractor) Delete(id int64) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	if _, err = stmt.ExecContext(ctx, id); err != nil {
 		return err
 	}
@@ -119,6 +121,7 @@ func (c Contractor) DeleteByIDs(ids []int64) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	if _, err = stmt.ExecContext(ctx); err != nil {
 		return err
 	}
@@ -145,6 +148,7 @@ func (c Contractor) FindByID(id int64) (models.Contractor, error) {
 		if err == sql.ErrNoRows {
 			return mContractor, nil
 		}
+		return mContractor, err
 	}
 	return mContractor, nil
 }
