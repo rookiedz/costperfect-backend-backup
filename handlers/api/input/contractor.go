@@ -15,7 +15,7 @@ type Contractor struct {
 }
 
 //Match ...
-func (c *Contractor) Match(contractor *models.Contractor) {
+func (c Contractor) Match(contractor *models.Contractor) {
 	if c.Name != nil {
 		contractor.Name = *c.Name
 	}

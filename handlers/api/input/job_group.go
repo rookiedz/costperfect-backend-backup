@@ -9,7 +9,7 @@ type JobGroup struct {
 }
 
 //Match ...
-func (jg *JobGroup) Match(jobGroup *models.JobGroup) {
+func (jg JobGroup) Match(jobGroup *models.JobGroup) {
 	if jg.TypeID != nil {
 		jobGroup.TypeID = *jg.TypeID
 	}

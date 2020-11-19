@@ -8,7 +8,7 @@ type JobType struct {
 }
 
 //Match ...
-func (jt *JobType) Match(jobType *models.JobType) {
+func (jt JobType) Match(jobType *models.JobType) {
 	if jt.Label != nil {
 		jobType.Label = *jt.Label
 	}

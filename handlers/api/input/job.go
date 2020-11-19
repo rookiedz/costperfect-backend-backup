@@ -10,7 +10,7 @@ type Job struct {
 }
 
 //Match ...
-func (j *Job) Match(job *models.Job) {
+func (j Job) Match(job *models.Job) {
 	if j.TypeID != nil {
 		job.TypeID = *j.TypeID
 	}

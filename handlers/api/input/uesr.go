@@ -11,7 +11,7 @@ type User struct {
 }
 
 //Match ...
-func (u *User) Match(user *models.User) {
+func (u User) Match(user *models.User) {
 	if u.EmployeeID != nil {
 		user.EmployeeID = *u.EmployeeID
 	}
