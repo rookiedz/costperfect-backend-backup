@@ -19,7 +19,7 @@ func ProjectAPIRouter() http.Handler {
 		r.Post("/", hdlProject.Create)
 		r.Delete("/", hdlProject.DeleteByIDs)
 	})
-	r.Route("/", func(r chi.Router) {
+	r.Route("/{id:[0-9]+}", func(r chi.Router) {
 		r.Get("/", hdlProject.Get)
 		r.Put("/", hdlProject.Update)
 		r.Delete("/", hdlProject.Delete)
