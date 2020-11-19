@@ -139,7 +139,7 @@ func (c Contractor) FindByID(id int64) (models.Contractor, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE contractor_id ? id`, c.QueryColumn, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE contractor_id = ?`, c.QueryColumn, c.TableName))
 	if err != nil {
 		return mContractor, err
 	}

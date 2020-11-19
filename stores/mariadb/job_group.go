@@ -24,7 +24,7 @@ func NewJobGroup() JobGroup {
 		"job_type_id",
 		"job_group_label",
 	}
-	return JobGroup{TableName: "job_group", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
+	return JobGroup{TableName: "job_groups", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
 
 //Create ...
