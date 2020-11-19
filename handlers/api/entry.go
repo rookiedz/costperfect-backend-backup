@@ -17,7 +17,10 @@ func NewEmptyData() EmptyData {
 
 //Success ...
 func Success(endpoint string, data interface{}) Data {
-	return Data{Status: "success", Data: data}
+	var entry map[string]interface{}
+	entry = make(map[string]interface{})
+	entry[endpoint] = data
+	return Data{Status: "success", Data: entry}
 }
 
 //NotFound ...
