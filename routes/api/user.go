@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi"
 )
 
-//UserAPI ...
-func UserAPI() http.Handler {
+//UserAPIRouter ...
+func UserAPIRouter() http.Handler {
 	var r *chi.Mux
 	var hdlUser api.User
 

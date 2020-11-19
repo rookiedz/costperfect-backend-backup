@@ -23,8 +23,14 @@ func InitialRouter() http.Handler {
 
 	api.Initial()
 	r.Route("/api", func(r chi.Router) {
-		r.Mount("/users", api.UserAPI())
-		r.Mount("/authors", api.AuthorAPI())
+		r.Mount("/contractors", api.ContractorAPIRouter())
+		r.Mount("/jobgroups", api.JobGroupAPIRouter())
+		r.Mount("/jobtypes", api.JobTypeAPIRouter())
+		r.Mount("/jobs", api.JobAPIRouter())
+		r.Mount("/owners", api.OwnerAPIRouter())
+		r.Mount("/projects", api.ProjectAPIRouter())
+		r.Mount("/users", api.UserAPIRouter())
+		//r.Mount("/authors", api.AuthorAPI())
 	})
 	r.Mount("/auth", AuthRouter())
 	return r
