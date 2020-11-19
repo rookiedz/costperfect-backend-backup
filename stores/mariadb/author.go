@@ -26,10 +26,8 @@ func NewAuthor() Author {
 		"author_password",
 		"author_salt",
 		"user_id",
-		"author_deleted",
 		"author_created_at",
 		"author_updated_at",
-		"author_deleted_at",
 	}
 	return Author{TableName: "authors", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
@@ -143,7 +141,7 @@ func (a Author) FindByID(id int64) (models.Author, error) {
 		return ma, err
 	}
 	defer stmt.Close()
-	if err := stmt.QueryRowContext(ctx, id).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
+	if err := stmt.QueryRowContext(ctx, id).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.CreatedAt, &ma.UpdatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return ma, nil
 		}
@@ -168,7 +166,7 @@ func (a Author) FindByUsername(username string) (models.Author, error) {
 		return ma, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, username).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
+	if err = stmt.QueryRowContext(ctx, username).Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.CreatedAt, &ma.UpdatedAt); err != nil {
 		if err == sql.ErrNoRows {
 			return ma, nil
 		}
@@ -209,7 +207,7 @@ func (a Author) FindAll(setters ...Option) ([]models.Author, error) {
 
 	for rows.Next() {
 		var ma models.Author
-		if err = rows.Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.Deleted, &ma.CreatedAt, &ma.UpdatedAt, &ma.DeletedAt); err != nil {
+		if err = rows.Scan(&ma.ID, &ma.Username, &ma.Password, &ma.Salt, &ma.UserID, &ma.CreatedAt, &ma.UpdatedAt); err != nil {
 			return mas, err
 		}
 		mas = append(mas, ma)
