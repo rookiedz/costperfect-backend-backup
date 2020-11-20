@@ -4,8 +4,11 @@ import "costperfect/backend/models"
 
 //Project ...
 type Project struct {
-	Name    *string `validate:"required"`
-	OwnerID *int64  `validate:"required"`
+	Name         *string `validate:"required"`
+	OwnerName    *string `validate:"required"`
+	OwnerNameEng *string `validate:"required"`
+	Director     *string `validate:"required"`
+	Supervisor   *string `validate:"required"`
 }
 
 //Match ...
@@ -13,7 +16,16 @@ func (p Project) Match(project *models.Project) {
 	if p.Name != nil {
 		project.Name = *p.Name
 	}
-	if p.OwnerID != nil {
-		project.OwnerID = *p.OwnerID
+	if p.OwnerName != nil {
+		project.OwnerName = *p.OwnerName
+	}
+	if p.OwnerNameEng != nil {
+		project.OwnerNameEng = *p.OwnerNameEng
+	}
+	if p.Director != nil {
+		project.Director = *p.Director
+	}
+	if p.Supervisor != nil {
+		project.Supervisor = *p.Supervisor
 	}
 }

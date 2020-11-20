@@ -22,7 +22,10 @@ func NewProject() Project {
 	columns = []string{
 		"project_id",
 		"project_name",
-		"owner_id"}
+		"project_owner_name",
+		"project_owner_name_eng",
+		"project_director",
+		"project_supervisor"}
 	return Project{TableName: "projects", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
 
@@ -39,14 +42,14 @@ func (p Project) Create(project models.Project) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (project_name, owner_id, project_created_at, project_updated_at)VALUES(?,?,?,?)`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (project_name, project_owner_name, project_owner_name_eng, project_director, project_supervisor, project_created_at, project_updated_at)VALUES(?,?,?,?)`, p.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, project.Name, project.OwnerID, cds, cds)
+	res, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Director, project.Supervisor, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -68,13 +71,13 @@ func (p Project) Update(id int64, project models.Project) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET project_name = ?, owner_id = ?, project_updated_at = ?  WHERE project_id = ?`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET project_name = ?, project_owner_name = ?, project_owner_name_eng = ?, project_director = ?, project_supervisor = ?, project_updated_at = ?  WHERE project_id = ?`, p.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, project.Name, project.OwnerID, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Director, project.Supervisor, cds, id); err != nil {
 		return err
 	}
 	return nil
@@ -141,7 +144,7 @@ func (p Project) FindByID(id int64) (models.Project, error) {
 		return mProject, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mProject.Name, &mProject.OwnerID); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mProject.Name, &mProject.OwnerName, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Director, &mProject.Supervisor); err != nil {
 		if err == sql.ErrNoRows {
 			return mProject, nil
 		}
@@ -183,7 +186,7 @@ func (p Project) FindAll(setters ...Option) ([]models.Project, error) {
 
 	for rows.Next() {
 		var mProject models.Project
-		if err = rows.Scan(&mProject.Name, &mProject.OwnerID); err != nil {
+		if err = rows.Scan(&mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Director, &mProject.Supervisor); err != nil {
 			return mProjects, err
 		}
 		mProjects = append(mProjects, mProject)
