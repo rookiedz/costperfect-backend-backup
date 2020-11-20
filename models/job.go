@@ -16,7 +16,7 @@ type JobGroup struct {
 //Job ...
 type Job struct {
 	Model
-	Label   string `json:"label"`
-	TypeID  int64  `json:"type_id"`
-	GroupID int64  `json:"group_id"`
+	Description string `json:"description"`
+	TypeID      int64  `json:"type_id"`
+	GroupID     int64  `json:"group_id"`
 }

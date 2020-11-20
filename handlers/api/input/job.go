@@ -4,9 +4,9 @@ import "costperfect/backend/models"
 
 //Job ...
 type Job struct {
-	TypeID  *int64  `validate:"required"`
-	GroupID *int64  `validate:"required"`
-	Label   *string `validate:"required"`
+	TypeID      *int64  `validate:"required"`
+	GroupID     *int64  `validate:"required"`
+	Description *string `validate:"required"`
 }
 
 //Match ...
@@ -17,7 +17,7 @@ func (j Job) Match(job *models.Job) {
 	if j.GroupID != nil {
 		job.GroupID = *j.GroupID
 	}
-	if j.Label != nil {
-		job.Label = *j.Label
+	if j.Description != nil {
+		job.Description = *j.Description
 	}
 }

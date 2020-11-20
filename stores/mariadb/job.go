@@ -23,7 +23,7 @@ func NewJob() Job {
 		"job_id",
 		"job_type_id",
 		"job_group_id",
-		"job_lable",
+		"job_description",
 	}
 	return Job{TableName: "jobs", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
@@ -41,13 +41,13 @@ func (j Job) Create(job models.Job) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_id, group_label, job_created_at, job_updated_at)VALUES(?,?,?,?,?)`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_id, group_description, job_created_at, job_updated_at)VALUES(?,?,?,?,?)`, j.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Label, cds, cds)
+	res, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Description, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -69,13 +69,13 @@ func (j Job) Update(id int64, job models.Job) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET job_type_id = ?, job_group_id = ?, job_label = ?, job_updated_at = ? WHERE job_id = ?`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET job_type_id = ?, job_group_id = ?, job_description = ?, job_updated_at = ? WHERE job_id = ?`, j.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Label, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, job.TypeID, job.GroupID, job.Description, cds, id); err != nil {
 		return err
 	}
 	return nil
@@ -140,7 +140,7 @@ func (j Job) FindByID(id int64) (models.Job, error) {
 		return mJob, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Label); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Description); err != nil {
 		if err == sql.ErrNoRows {
 			return mJob, nil
 		}
@@ -180,7 +180,7 @@ func (j Job) FindAll(setters ...Option) ([]models.Job, error) {
 
 	for rows.Next() {
 		var mJob models.Job
-		if err = rows.Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Label); err != nil {
+		if err = rows.Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Description); err != nil {
 			return mJobs, err
 		}
 		mJobs = append(mJobs, mJob)

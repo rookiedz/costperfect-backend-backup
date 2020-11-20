@@ -7,8 +7,9 @@ type Contract struct {
 	Model
 	ProjectID                int64     `json:"project_id"`
 	ContractorID             int64     `json:"contractor_id"`
-	No                       string    `json:"no"`
-	Name                     string    `json:"name"`
+	ContractNo               string    `json:"contract_no"`
+	LetterOfIntentNo         string    `json:"loi_no"`
+	Title                    string    `json:"title"`
 	Value                    int64     `json:"value"`
 	Tax                      int64     `json:"tax"`
 	CreatedData              time.Time `json:"created_date"`
