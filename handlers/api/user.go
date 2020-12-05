@@ -53,7 +53,7 @@ func (u User) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Done(u.Endpoint, res))
+	JSON(w, http.StatusOK, Success(u.Endpoint, res))
 }
 
 //Update ...
@@ -91,7 +91,7 @@ func (u User) Update(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
 //Delete ...
@@ -110,7 +110,7 @@ func (u User) Delete(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
 //DeleteByIDs ...
@@ -128,7 +128,7 @@ func (u User) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
 }
 
 //Get ...

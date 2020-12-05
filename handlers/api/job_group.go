@@ -159,7 +159,7 @@ func (jg JobGroup) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int64
+	var offset, limit, total int64
 	var mJobGroups []models.JobGroup
 	var mdbJobGroup mariadb.JobGroup
 	var err error
@@ -170,5 +170,12 @@ func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(jg.Endpoint, mJobGroups))
+	total, err = mdbJobGroup.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(jg.Endpoint, total, mJobGroups))
 }

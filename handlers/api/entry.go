@@ -23,14 +23,6 @@ func Success(endpoint string, data interface{}) Data {
 	return Data{Status: "success", Data: entry}
 }
 
-//Done ...
-func Done(endpoint string, data interface{}) Data {
-	var entry map[string]interface{}
-	entry = make(map[string]interface{})
-	entry[endpoint] = data
-	return Data{Status: "done", Data: entry}
-}
-
 //Total ...
 func Total(endpoint string, total int64, data interface{}) Data {
 	var entry map[string]interface{}

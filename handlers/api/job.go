@@ -163,7 +163,7 @@ func (j Job) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (j Job) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int64
+	var offset, limit, total int64
 	var mJobs []models.Job
 	var mdbJob mariadb.Job
 	var err error
@@ -174,5 +174,12 @@ func (j Job) All(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(j.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(j.Endpoint, mJobs))
+	total, err = mdbJob.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(j.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(j.Endpoint, total, mJobs))
 }

@@ -159,7 +159,7 @@ func (p Project) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (p Project) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int64
+	var offset, limit, total int64
 	var mProjects []models.Project
 	var mdbProject mariadb.Project
 	var err error
@@ -170,5 +170,12 @@ func (p Project) All(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(p.Endpoint, mProjects))
+	total, err = mdbProject.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(p.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(p.Endpoint, total, mProjects))
 }
