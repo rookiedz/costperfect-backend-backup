@@ -193,3 +193,26 @@ func (j Job) FindAll(setters ...Option) ([]models.Job, error) {
 	}
 	return mJobs, nil
 }
+
+//GetTotal ...
+func (j Job) GetTotal() (int64, error) {
+	var err error
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(job_id) FROM %s`, j.TableName))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
