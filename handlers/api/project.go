@@ -159,7 +159,7 @@ func (p Project) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (p Project) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int
+	var offset, limit int64
 	var mProjects []models.Project
 	var mdbProject mariadb.Project
 	var err error

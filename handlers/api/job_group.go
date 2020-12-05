@@ -159,7 +159,7 @@ func (jg JobGroup) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int
+	var offset, limit int64
 	var mJobGroups []models.JobGroup
 	var mdbJobGroup mariadb.JobGroup
 	var err error

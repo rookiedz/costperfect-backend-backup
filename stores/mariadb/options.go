@@ -2,8 +2,8 @@ package mariadb
 
 //Options ...
 type Options struct {
-	Offset int
-	Limit  int
+	Offset int64
+	Limit  int64
 	Column string
 	Sort   string
 }
@@ -12,14 +12,14 @@ type Options struct {
 type Option func(*Options)
 
 //WithOffset ...
-func WithOffset(offset int) Option {
+func WithOffset(offset int64) Option {
 	return func(args *Options) {
 		args.Offset = offset
 	}
 }
 
 //WithLimit ...
-func WithLimit(limit int) Option {
+func WithLimit(limit int64) Option {
 	return func(args *Options) {
 		args.Limit = limit
 	}

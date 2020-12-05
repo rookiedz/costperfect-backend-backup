@@ -162,9 +162,18 @@ func (u User) All(w http.ResponseWriter, r *http.Request) {
 	var mUsers []models.User
 	var mdbUser mariadb.User
 	var err error
+	var offset, limit int64
 
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
 	mdbUser = mariadb.NewUser()
-	mUsers, err = mdbUser.FindAll()
+	mUsers, err = mdbUser.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return

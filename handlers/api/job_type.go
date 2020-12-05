@@ -159,7 +159,7 @@ func (jt JobType) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (jt JobType) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int
+	var offset, limit int64
 	var mJobTypes []models.JobType
 	var mdbJobType mariadb.JobType
 	var err error

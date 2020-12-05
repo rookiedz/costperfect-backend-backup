@@ -15,6 +15,14 @@ func ID64(i string) (int64, error) {
 	return strconv.ParseInt(i, 10, 64)
 }
 
+//INT64 ...
+func INT64(i string) (int64, error) {
+	if i == "" {
+		return 0, errors.New("ID is empty")
+	}
+	return strconv.ParseInt(i, 10, 64)
+}
+
 //JSON ...
 func JSON(w http.ResponseWriter, status int, entry interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

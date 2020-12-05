@@ -159,7 +159,7 @@ func (o Owner) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (o Owner) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int
+	var offset, limit int64
 	var mOwners []models.Owner
 	var mdbOwner mariadb.Owner
 	var err error

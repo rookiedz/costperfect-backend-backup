@@ -159,7 +159,7 @@ func (c Contractor) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int
+	var offset, limit int64
 	var mContractors []models.Contractor
 	var mdbContractor mariadb.Contractor
 	var err error
