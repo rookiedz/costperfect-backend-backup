@@ -159,7 +159,7 @@ func (c Contractor) Get(w http.ResponseWriter, r *http.Request) {
 
 //All ...
 func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
-	var offset, limit int64
+	var total, offset, limit int64
 	var mContractors []models.Contractor
 	var mdbContractor mariadb.Contractor
 	var err error
@@ -170,5 +170,12 @@ func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, mContractors))
+	total, err = mdbContractor.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(c.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(c.Endpoint, total, mContractors))
 }

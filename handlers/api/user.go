@@ -39,7 +39,6 @@ func (u User) Create(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Failure(u.Endpoint, err))
 		return
 	}
-
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
 			JSON(w, http.StatusOK, Err(u.Endpoint, err))
@@ -54,7 +53,7 @@ func (u User) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success(u.Endpoint, res))
+	JSON(w, http.StatusOK, Done(u.Endpoint, res))
 }
 
 //Update ...
@@ -92,7 +91,7 @@ func (u User) Update(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
 }
 
 //Delete ...
@@ -111,7 +110,7 @@ func (u User) Delete(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
 }
 
 //DeleteByIDs ...
@@ -129,7 +128,7 @@ func (u User) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(u.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Done(u.Endpoint, NewEmptyData()))
 }
 
 //Get ...
@@ -162,7 +161,7 @@ func (u User) All(w http.ResponseWriter, r *http.Request) {
 	var mUsers []models.User
 	var mdbUser mariadb.User
 	var err error
-	var offset, limit int64
+	var total, offset, limit int64
 
 	offset, err = INT64(r.URL.Query().Get("offset"))
 	if err != nil {
@@ -178,5 +177,12 @@ func (u User) All(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(u.Endpoint, err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(u.Endpoint, mUsers))
+	total, err = mdbUser.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(u.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(u.Endpoint, total, mUsers))
 }
