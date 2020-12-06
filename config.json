@@ -1,0 +1,15 @@
+{
+    "application": {
+        "port": 8080,
+        "bitkeys": {
+            "256": "7eb7db7d1ac8dfcfd17b47697778bfa982f5752ea0e0fa846de5e38ca0642c79",
+            "512": "aeeefb567cdc764079e3f66497cda270c54876c22fe56eb663cba00ac624feff14445ac99ac5d2aaab39e85076a398ff653450a4d8266af4e43066879d7fbc5c"
+        }
+    },
+    "mariadb": {
+        "host": "localhost:3306",
+        "username": "root",
+        "password": "111111",
+        "dbname": "costperfect"
+    }
+}
