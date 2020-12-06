@@ -19,7 +19,7 @@ func Start() {
 	mariadb.Connect(c.DataSourceName)
 
 	s := &http.Server{
-		Addr:           ":8080",
+		Addr:           ":80",
 		Handler:        r,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

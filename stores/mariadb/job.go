@@ -41,7 +41,7 @@ func (j Job) Create(job models.Job) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_id, group_description, job_created_at, job_updated_at)VALUES(?,?,?,?,?)`, j.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (job_type_id, job_group_id, job_description, job_created_at, job_updated_at)VALUES(?,?,?,?,?)`, j.TableName))
 	if err != nil {
 		return 0, err
 	}
