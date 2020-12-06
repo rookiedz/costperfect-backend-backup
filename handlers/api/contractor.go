@@ -39,7 +39,6 @@ func (c Contractor) Create(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
 		return
 	}
-
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
 			JSON(w, http.StatusOK, Err(c.Endpoint, err))
@@ -163,6 +162,15 @@ func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
 	var mContractors []models.Contractor
 	var mdbContractor mariadb.Contractor
 	var err error
+
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
 
 	mdbContractor = mariadb.NewContractor()
 	mContractors, err = mdbContractor.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))

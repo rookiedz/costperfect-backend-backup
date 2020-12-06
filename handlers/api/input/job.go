@@ -4,9 +4,9 @@ import "costperfect/backend/models"
 
 //Job ...
 type Job struct {
-	TypeID      *int64  `validate:"required"`
-	GroupID     *int64  `validate:"required"`
-	Description *string `validate:"required"`
+	TypeID      *int64  `json:"type_id" validate:"required"`
+	GroupID     *int64  `json:"group_id" validate:"required"`
+	Description *string `json:"description" validate:"required"`
 }
 
 //Match ...

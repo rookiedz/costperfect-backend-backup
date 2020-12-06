@@ -164,6 +164,15 @@ func (p Project) All(w http.ResponseWriter, r *http.Request) {
 	var mdbProject mariadb.Project
 	var err error
 
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
 	mdbProject = mariadb.NewProject()
 	mProjects, err = mdbProject.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {

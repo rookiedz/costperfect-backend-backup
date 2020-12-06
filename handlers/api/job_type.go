@@ -164,6 +164,15 @@ func (jt JobType) All(w http.ResponseWriter, r *http.Request) {
 	var mdbJobType mariadb.JobType
 	var err error
 
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
 	mdbJobType = mariadb.NewJobType()
 	mJobTypes, err = mdbJobType.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {

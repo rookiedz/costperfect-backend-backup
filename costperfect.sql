@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Nov 07, 2020 at 08:21 PM
+-- Generation Time: Dec 06, 2020 at 12:04 AM
 -- Server version: 10.5.6-MariaDB-1:10.5.6+maria~focal
 -- PHP Version: 7.4.11
 
@@ -42,39 +42,123 @@ CREATE TABLE `authors` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contractors`
+--
+
+CREATE TABLE `contractors` (
+  `contractor_id` int(11) NOT NULL,
+  `contractor_name` varchar(256) NOT NULL,
+  `contractor_name_eng` varchar(256) DEFAULT NULL,
+  `contractor_address` varchar(256) DEFAULT NULL,
+  `contractor_telephone` varchar(100) DEFAULT NULL,
+  `contractor_fax` varchar(100) DEFAULT NULL,
+  `contractor_created_at` datetime DEFAULT NULL,
+  `contractor_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `contractors`
+--
+
+INSERT INTO `contractors` (`contractor_id`, `contractor_name`, `contractor_name_eng`, `contractor_address`, `contractor_telephone`, `contractor_fax`, `contractor_created_at`, `contractor_updated_at`) VALUES
+(13, 'ศราวุธ พิมสาย', 'Sarawuth Pimsai', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '2222222', '2020-12-06 04:53:58', '2020-12-06 07:04:03'),
+(14, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0957126336', '20215648', '2020-12-06 04:54:45', '2020-12-06 06:47:59'),
+(15, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '555555', '2020-12-06 07:04:16', '2020-12-06 07:04:16');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `job_id` int(11) NOT NULL,
+  `job_type_id` int(11) NOT NULL,
+  `job_group_id` int(11) NOT NULL,
+  `job_description` varchar(256) NOT NULL,
+  `job_created_at` datetime DEFAULT NULL,
+  `job_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_groups`
+--
+
+CREATE TABLE `job_groups` (
+  `job_group_id` int(11) NOT NULL,
+  `job_group_label` int(11) NOT NULL,
+  `job_type_id` int(11) NOT NULL,
+  `job_group_created_at` datetime DEFAULT NULL,
+  `job_group_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_types`
+--
+
+CREATE TABLE `job_types` (
+  `job_type_id` int(11) NOT NULL,
+  `job_type_label` varchar(256) NOT NULL,
+  `job_type_created_at` datetime DEFAULT NULL,
+  `job_type_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `owners`
+--
+
+CREATE TABLE `owners` (
+  `owner_id` int(11) NOT NULL,
+  `owner_name` varchar(256) NOT NULL,
+  `owner_name_eng` varchar(256) DEFAULT NULL,
+  `owner_director` varchar(256) NOT NULL,
+  `owner_created_at` datetime DEFAULT NULL,
+  `owner_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `projects`
+--
+
+CREATE TABLE `projects` (
+  `project_id` int(11) NOT NULL,
+  `project_name` varchar(256) NOT NULL,
+  `owner_id` int(11) NOT NULL,
+  `project_created_at` datetime DEFAULT NULL,
+  `project_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `user_employee_id` varchar(20) DEFAULT NULL,
-  `user_name` varchar(100) NOT NULL,
+  `user_fullname` varchar(100) NOT NULL,
   `user_address` varchar(256) DEFAULT NULL,
   `user_telephone` varchar(20) DEFAULT NULL,
-  `user_deleted` tinyint(1) NOT NULL DEFAULT 0,
   `user_created_at` datetime DEFAULT NULL,
-  `user_updated_at` datetime DEFAULT NULL,
-  `user_deleted_at` datetime DEFAULT NULL
+  `user_updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `user_employee_id`, `user_name`, `user_address`, `user_telephone`, `user_deleted`, `user_created_at`, `user_updated_at`, `user_deleted_at`) VALUES
-(1, '001', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:12:19', '2020-11-08 01:46:26', NULL),
-(2, '002', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:12:21', '2020-11-08 01:46:20', NULL),
-(3, '003', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:12:25', '2020-11-08 01:46:14', NULL),
-(4, '004', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:15:00', '2020-11-08 01:46:08', NULL),
-(5, '005', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:15:16', '2020-11-08 01:46:03', NULL),
-(6, '006', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:30:31', '2020-11-08 01:45:57', NULL),
-(7, '007', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:31:31', '2020-11-08 01:45:51', NULL),
-(8, '008', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:31:54', '2020-11-08 01:45:37', NULL),
-(9, '009', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:34:26', '2020-11-08 01:45:31', NULL),
-(10, '010', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:34:56', '2020-11-08 01:45:25', NULL),
-(11, '011', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:35:18', '2020-11-08 01:45:17', NULL),
-(12, '012', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0918861050', 0, '2020-11-08 00:37:08', '2020-11-08 01:45:11', NULL),
-(13, '013', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0809789718', 0, '2020-11-08 00:43:09', '2020-11-08 01:45:04', NULL);
+INSERT INTO `users` (`user_id`, `user_employee_id`, `user_fullname`, `user_address`, `user_telephone`, `user_created_at`, `user_updated_at`) VALUES
+(171, '001', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม', '0809789718', '2020-12-06 03:03:53', '2020-12-06 06:04:22'),
+(172, '002', 'Sarawuth Pimsai', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '2020-12-06 03:04:01', '2020-12-06 06:02:35');
 
 --
 -- Indexes for dumped tables
@@ -85,6 +169,37 @@ INSERT INTO `users` (`user_id`, `user_employee_id`, `user_name`, `user_address`,
 --
 ALTER TABLE `authors`
   ADD PRIMARY KEY (`author_id`);
+
+--
+-- Indexes for table `contractors`
+--
+ALTER TABLE `contractors`
+  ADD PRIMARY KEY (`contractor_id`);
+
+--
+-- Indexes for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`job_id`),
+  ADD KEY `job_type_id` (`job_type_id`,`job_group_id`);
+
+--
+-- Indexes for table `job_types`
+--
+ALTER TABLE `job_types`
+  ADD PRIMARY KEY (`job_type_id`);
+
+--
+-- Indexes for table `owners`
+--
+ALTER TABLE `owners`
+  ADD PRIMARY KEY (`owner_id`);
+
+--
+-- Indexes for table `projects`
+--
+ALTER TABLE `projects`
+  ADD PRIMARY KEY (`project_id`);
 
 --
 -- Indexes for table `users`
@@ -103,10 +218,40 @@ ALTER TABLE `authors`
   MODIFY `author_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `contractors`
+--
+ALTER TABLE `contractors`
+  MODIFY `contractor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_types`
+--
+ALTER TABLE `job_types`
+  MODIFY `job_type_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `owners`
+--
+ALTER TABLE `owners`
+  MODIFY `owner_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `projects`
+--
+ALTER TABLE `projects`
+  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=173;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

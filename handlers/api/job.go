@@ -168,6 +168,15 @@ func (j Job) All(w http.ResponseWriter, r *http.Request) {
 	var mdbJob mariadb.Job
 	var err error
 
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
 	mdbJob = mariadb.NewJob()
 	mJobs, err = mdbJob.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {

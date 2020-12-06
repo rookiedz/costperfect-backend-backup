@@ -6,12 +6,11 @@ import (
 
 //Contractor ...
 type Contractor struct {
-	ID        *int64  `validate:"-"`
-	Name      *string `validate:"required"`
-	NameEng   *string `validate:"-"`
-	Address   *string `validate:"-"`
-	Telephone *string `validate:"-"`
-	Fax       *string `validate:"-"`
+	Name      *string `json:"name" validate:"required"`
+	NameEng   *string `json:"name_eng" validate:"-"`
+	Address   *string `json:"address" validate:"-"`
+	Telephone *string `json:"telephone" validate:"-"`
+	Fax       *string `json:"fax" validate:"-"`
 }
 
 //Match ...

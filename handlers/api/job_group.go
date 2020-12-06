@@ -164,6 +164,15 @@ func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
 	var mdbJobGroup mariadb.JobGroup
 	var err error
 
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
 	mdbJobGroup = mariadb.NewJobGroup()
 	mJobGroups, err = mdbJobGroup.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {

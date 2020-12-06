@@ -4,7 +4,7 @@ import "costperfect/backend/models"
 
 //JobType ...
 type JobType struct {
-	Label *string `validate:"required"`
+	Label *string `json:"label" validate:"required"`
 }
 
 //Match ...

@@ -42,7 +42,7 @@ func (c Contractor) Create(contractor models.Contractor) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?)`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?,?,?)`, c.TableName))
 	if err != nil {
 		return 0, err
 	}
@@ -71,7 +71,7 @@ func (c Contractor) Update(id int64, contractor models.Contractor) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contractor_name = ?, contractor_name_eng = ?, contract_address = ?, contractor_telephone = ?, contractor_fax = ?, contractor_updated_at = ? WHERE contractor_id = ?`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contractor_name = ?, contractor_name_eng = ?, contractor_address = ?, contractor_telephone = ?, contractor_fax = ?, contractor_updated_at = ? WHERE contractor_id = ?`, c.TableName))
 	if err != nil {
 		return err
 	}
