@@ -186,5 +186,5 @@ func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	JSON(w, http.StatusOK, Total(jg.Endpoint, total, mJobGroups))
+	JSON(w, http.StatusOK, Total(total, mJobGroups))
 }

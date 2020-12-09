@@ -185,5 +185,5 @@ func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	JSON(w, http.StatusOK, Total(c.Endpoint, total, mContractors))
+	JSON(w, http.StatusOK, Total(total, mContractors))
 }

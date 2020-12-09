@@ -186,5 +186,5 @@ func (jt JobType) All(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	JSON(w, http.StatusOK, Total(jt.Endpoint, total, mJobTypes))
+	JSON(w, http.StatusOK, Total(total, mJobTypes))
 }

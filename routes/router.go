@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 )
 
@@ -24,6 +25,11 @@ func InitialRouter() http.Handler {
 		AllowCredentials: false,
 		MaxAge:           300,
 	}))
+
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	api.Initial()
 	r.Route("/api", func(r chi.Router) {

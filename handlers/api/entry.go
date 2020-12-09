@@ -5,6 +5,7 @@ type Data struct {
 	Status  string      `json:"status"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data"`
+	Total   int64       `json:"total,omitempty"`
 }
 
 //EmptyData ...
@@ -24,12 +25,8 @@ func Success(endpoint string, data interface{}) Data {
 }
 
 //Total ...
-func Total(endpoint string, total int64, data interface{}) Data {
-	var entry map[string]interface{}
-	entry = make(map[string]interface{})
-	entry[endpoint] = data
-	entry["total"] = total
-	return Data{Status: "success", Data: entry}
+func Total(total int64, data interface{}) Data {
+	return Data{Status: "success", Total: total, Data: data}
 }
 
 //NotFound ...
