@@ -41,7 +41,7 @@ func InitialRouter() http.Handler {
 	workDir, _ := os.Getwd()
 	filesDir := http.Dir(filepath.Join(workDir, "html"))
 	fmt.Println(filesDir)
-	FileServer(r, "/", filesDir)
+	//FileServer(r, "/", filesDir)
 
 	return r
 }

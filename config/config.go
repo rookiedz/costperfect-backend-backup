@@ -3,11 +3,12 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
 //Config ...
 type Config struct {
-	MariaDB `json:"marialdb"`
+	MariaDB `json:"mariadb"`
 }
 
 //LoadConfiguration ...
@@ -16,8 +17,14 @@ func LoadConfiguration(file string) Config {
 	var config Config
 	var jsonParser *json.Decoder
 	var configFile *os.File
+	var workDir string
 
-	configFile, err = os.Open(file)
+	workDir, err = os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	configFile, err = os.Open(filepath.Join(workDir, file))
 	if err != nil {
 		panic(err)
 	}

@@ -16,7 +16,7 @@ func Start() {
 
 	r = routes.InitialRouter()
 	c = config.LoadConfiguration("config.json")
-	mariadb.Connect(c.DataSourceName)
+	mariadb.Connect(c.MariaDB.DataSourceName)
 
 	s := &http.Server{
 		Addr:           ":80",
@@ -25,5 +25,5 @@ func Start() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	log.Fatal(s.ListenAndServe())
+	log.Println(s.ListenAndServe())
 }

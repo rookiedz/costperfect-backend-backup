@@ -7,9 +7,6 @@
         }
     },
     "mariadb": {
-        "host": "localhost:3306",
-        "username": "root",
-        "password": "111111",
-        "dbname": "costperfect"
+        "data_soruce_name": "cpuser:111111@/costperfect?parseTime=true"
     }
 }
