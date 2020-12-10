@@ -141,7 +141,7 @@ func (jg JobGroup) FindByID(id int64) (models.JobGroup, error) {
 		return mJobGroup, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mJobGroup.ID, &mJobGroup.TypeID, &mJobGroup.Label); err != nil {
 		if err == sql.ErrNoRows {
 			return mJobGroup, nil
 		}
@@ -182,7 +182,7 @@ func (jg JobGroup) FindAll(setters ...Option) ([]models.JobGroup, error) {
 
 	for rows.Next() {
 		var mJobGroup models.JobGroup
-		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
+		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.TypeID, &mJobGroup.Label); err != nil {
 			return mJobGroups, err
 		}
 		mJobGroups = append(mJobGroups, mJobGroup)
@@ -251,7 +251,7 @@ func (jg JobGroup) FindByGroupType(jobTypeID int64, setters ...Option) ([]models
 
 	for rows.Next() {
 		var mJobGroup models.JobGroup
-		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
+		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.TypeID, &mJobGroup.Label); err != nil {
 			return mJobGroups, err
 		}
 		mJobGroups = append(mJobGroups, mJobGroup)
