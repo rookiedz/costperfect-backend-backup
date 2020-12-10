@@ -218,3 +218,72 @@ func (jg JobGroup) GetTotal() (int64, error) {
 	}
 	return total, nil
 }
+
+//FindByGroupType ...
+func (jg JobGroup) FindByGroupType(jobTypeID int64, setters ...Option) ([]models.JobGroup, error) {
+	var args *Options
+	var setter Option
+	args = &Options{Offset: 1, Limit: 50}
+	for _, setter = range setters {
+		setter(args)
+	}
+
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var rows *sql.Rows
+	var mJobGroups []models.JobGroup
+	var err error
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE job_type_id = ? LIMIT ?, ?`, jg.QueryColumn, jg.TableName))
+	if err != nil {
+		return mJobGroups, err
+	}
+	defer stmt.Close()
+	rows, err = stmt.QueryContext(ctx, jobTypeID, args.Offset-1, args.Limit)
+	if err != nil {
+		return mJobGroups, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mJobGroup models.JobGroup
+		if err = rows.Scan(&mJobGroup.ID, &mJobGroup.Label); err != nil {
+			return mJobGroups, err
+		}
+		mJobGroups = append(mJobGroups, mJobGroup)
+	}
+	if err = rows.Close(); err != nil {
+		return mJobGroups, err
+	}
+	if err = rows.Err(); err != nil {
+		return mJobGroups, err
+	}
+	return mJobGroups, nil
+}
+
+//GetTotalByJobType ...
+func (jg JobGroup) GetTotalByJobType(jobTypeID int64) (int64, error) {
+	var err error
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(job_group_id) FROM %s WHERE job_type_id = ?`, jg.TableName))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx, jobTypeID).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
