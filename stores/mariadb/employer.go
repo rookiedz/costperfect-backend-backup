@@ -9,27 +9,25 @@ import (
 	"time"
 )
 
-//Project ...
-type Project struct {
+//Employer ...
+type Employer struct {
 	TableName   string
 	Columns     []string
 	QueryColumn string
 }
 
-//NewProject ...
-func NewProject() Project {
+//NewEmployer ...
+func NewEmployer() Employer {
 	var columns []string
 	columns = []string{
-		"project_id",
-		"project_name",
-		"project_owner_name",
-		"project_owner_name_eng",
-		"project_manager"}
-	return Project{TableName: "projects", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
+		"employer_id",
+		"employer_fullname",
+		"project_id"}
+	return Employer{TableName: "employers", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
 
 //Create ...
-func (p Project) Create(project models.Project) (int64, error) {
+func (e Employer) Create(employer models.Employer) (int64, error) {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -41,14 +39,14 @@ func (p Project) Create(project models.Project) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (project_name, project_owner_name, project_owner_name_eng, project_manager, project_created_at, project_updated_at)VALUES(?,?,?,?,?,?)`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (employer_fullname, project_id, employer_created_at, employer_updated_at)VALUES(?,?,?,?)`, e.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, cds, cds)
+	res, err = stmt.ExecContext(ctx, employer.Fullname, employer.ProjectID, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -60,7 +58,7 @@ func (p Project) Create(project models.Project) (int64, error) {
 }
 
 //Update ...
-func (p Project) Update(id int64, project models.Project) error {
+func (e Employer) Update(id int64, employer models.Employer) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -70,20 +68,20 @@ func (p Project) Update(id int64, project models.Project) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET project_name = ?, project_owner_name = ?, project_owner_name_eng = ?, project_manager = ?, project_updated_at = ?  WHERE project_id = ?`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET employer_fullname = ?, project_id = ?, employer_updated_at = ?  WHERE employer_id = ?`, e.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, employer.Fullname, employer.ProjectID, cds, id); err != nil {
 		return err
 	}
 	return nil
 }
 
 //Delete ...
-func (p Project) Delete(id int64) error {
+func (e Employer) Delete(id int64) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -92,7 +90,7 @@ func (p Project) Delete(id int64) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE project_id = ?`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE employer_id = ?`, e.TableName))
 	if err != nil {
 		return err
 	}
@@ -104,7 +102,7 @@ func (p Project) Delete(id int64) error {
 }
 
 //DeleteByIDs ...
-func (p Project) DeleteByIDs(ids []int64) error {
+func (e Employer) DeleteByIDs(ids []int64) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -116,7 +114,7 @@ func (p Project) DeleteByIDs(ids []int64) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE project_id IN (%s)`, p.TableName, idsString))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE employer_id IN (%s)`, e.TableName, idsString))
 	if err != nil {
 		return err
 	}
@@ -128,8 +126,8 @@ func (p Project) DeleteByIDs(ids []int64) error {
 }
 
 //FindByID ...
-func (p Project) FindByID(id int64) (models.Project, error) {
-	var mProject models.Project
+func (e Employer) FindByID(id int64) (models.Employer, error) {
+	var mEmployer models.Employer
 	var ctx context.Context
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
@@ -138,22 +136,22 @@ func (p Project) FindByID(id int64) (models.Project, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE project_id = ?`, p.QueryColumn, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE employer_id = ?`, e.QueryColumn, e.TableName))
 	if err != nil {
-		return mProject, err
+		return mEmployer, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mEmployer.ID, &mEmployer.Fullname, &mEmployer.ProjectID); err != nil {
 		if err == sql.ErrNoRows {
-			return mProject, nil
+			return mEmployer, nil
 		}
-		return mProject, err
+		return mEmployer, err
 	}
-	return mProject, nil
+	return mEmployer, nil
 }
 
 //FindAll ...
-func (p Project) FindAll(setters ...Option) ([]models.Project, error) {
+func (e Employer) FindAll(setters ...Option) ([]models.Employer, error) {
 	var args *Options
 	var setter Option
 	args = &Options{Offset: 1, Limit: 50}
@@ -165,42 +163,42 @@ func (p Project) FindAll(setters ...Option) ([]models.Project, error) {
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var rows *sql.Rows
-	var mProjects []models.Project
+	var mEmployers []models.Employer
 	var err error
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s LIMIT ?, ?`, p.QueryColumn, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s LIMIT ?, ?`, e.QueryColumn, e.TableName))
 	if err != nil {
-		return mProjects, err
+		return mEmployers, err
 	}
 	defer stmt.Close()
 
 	rows, err = stmt.QueryContext(ctx, args.Offset-1, args.Limit)
 	if err != nil {
-		return mProjects, err
+		return mEmployers, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var mProject models.Project
-		if err = rows.Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager); err != nil {
-			return mProjects, err
+		var mEmployer models.Employer
+		if err = rows.Scan(&mEmployer.ID, &mEmployer.Fullname, &mEmployer.ProjectID); err != nil {
+			return mEmployers, err
 		}
-		mProjects = append(mProjects, mProject)
+		mEmployers = append(mEmployers, mEmployer)
 	}
 	if err = rows.Close(); err != nil {
-		return mProjects, err
+		return mEmployers, err
 	}
 	if err = rows.Err(); err != nil {
-		return mProjects, err
+		return mEmployers, err
 	}
-	return mProjects, nil
+	return mEmployers, nil
 }
 
 //GetTotal ...
-func (p Project) GetTotal() (int64, error) {
+func (e Employer) GetTotal() (int64, error) {
 	var err error
 	var ctx context.Context
 	var cancel context.CancelFunc
@@ -210,7 +208,7 @@ func (p Project) GetTotal() (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(project_id) FROM %s`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(employer_id) FROM %s`, e.TableName))
 	if err != nil {
 		return 0, err
 	}

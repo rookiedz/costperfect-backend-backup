@@ -7,8 +7,7 @@ type Project struct {
 	Name         *string `validate:"required"`
 	OwnerName    *string `validate:"required"`
 	OwnerNameEng *string `validate:"required"`
-	Director     *string `validate:"required"`
-	Supervisor   *string `validate:"required"`
+	Manager      *string `validate:"required"`
 }
 
 //Match ...
@@ -22,10 +21,7 @@ func (p Project) Match(project *models.Project) {
 	if p.OwnerNameEng != nil {
 		project.OwnerNameEng = *p.OwnerNameEng
 	}
-	if p.Director != nil {
-		project.Director = *p.Director
-	}
-	if p.Supervisor != nil {
-		project.Supervisor = *p.Supervisor
+	if p.Manager != nil {
+		project.Manager = *p.Manager
 	}
 }

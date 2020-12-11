@@ -18,5 +18,7 @@ type Job struct {
 	Model
 	Description string `json:"description"`
 	TypeID      int64  `json:"type_id"`
+	TypeLabel   string `json:"type_label,omitempty"`
 	GroupID     int64  `json:"group_id"`
+	GroupLabel  string `json:"group_label,omitempty"`
 }
