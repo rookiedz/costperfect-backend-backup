@@ -189,8 +189,8 @@ func (jt JobType) All(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, Total(total, mJobTypes))
 }
 
-//JobGroups ...
-func (jt JobType) JobGroups(w http.ResponseWriter, r *http.Request) {
+//Groups ...
+func (jt JobType) Groups(w http.ResponseWriter, r *http.Request) {
 	var id, offset, limit, total int64
 	var mJobGroups []models.JobGroup
 	var mdbJobGroup mariadb.JobGroup
@@ -210,7 +210,7 @@ func (jt JobType) JobGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
-	mJobGroups, err = mdbJobGroup.FindByGroupType(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
+	mJobGroups, err = mdbJobGroup.FindByType(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
 		JSON(w, http.StatusOK, Err(jt.Endpoint, err))
 		return

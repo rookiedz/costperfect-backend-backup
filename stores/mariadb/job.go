@@ -216,3 +216,71 @@ func (j Job) GetTotal() (int64, error) {
 	}
 	return total, nil
 }
+
+//FindByGroup ...
+func (j Job) FindByGroup(groupID int64, setters ...Option) ([]models.Job, error) {
+	var args *Options
+	var setter Option
+	args = &Options{Offset: 1, Limit: 50}
+	for _, setter = range setters {
+		setter(args)
+	}
+	var mJobs []models.Job
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var rows *sql.Rows
+	var err error
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE job_group_id = ? LIMIT ?, ?`, j.QueryColumn, j.TableName))
+	if err != nil {
+		return mJobs, err
+	}
+	defer stmt.Close()
+	rows, err = stmt.QueryContext(ctx, groupID, args.Offset-1, args.Limit)
+	if err != nil {
+		return mJobs, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mJob models.Job
+		if err = rows.Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Description); err != nil {
+			return mJobs, err
+		}
+		mJobs = append(mJobs, mJob)
+	}
+	if err = rows.Close(); err != nil {
+		return mJobs, err
+	}
+	if err = rows.Err(); err != nil {
+		return mJobs, err
+	}
+	return mJobs, nil
+}
+
+//GetTotalByGroup ...
+func (j Job) GetTotalByGroup(groupID int64) (int64, error) {
+	var err error
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(job_id) WHERE job_group_id = ? FROM %s`, j.TableName))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx, groupID).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}

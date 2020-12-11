@@ -219,8 +219,8 @@ func (jg JobGroup) GetTotal() (int64, error) {
 	return total, nil
 }
 
-//FindByGroupType ...
-func (jg JobGroup) FindByGroupType(jobTypeID int64, setters ...Option) ([]models.JobGroup, error) {
+//FindByType ...
+func (jg JobGroup) FindByType(typeID int64, setters ...Option) ([]models.JobGroup, error) {
 	var args *Options
 	var setter Option
 	args = &Options{Offset: 1, Limit: 50}
@@ -243,7 +243,7 @@ func (jg JobGroup) FindByGroupType(jobTypeID int64, setters ...Option) ([]models
 		return mJobGroups, err
 	}
 	defer stmt.Close()
-	rows, err = stmt.QueryContext(ctx, jobTypeID, args.Offset-1, args.Limit)
+	rows, err = stmt.QueryContext(ctx, typeID, args.Offset-1, args.Limit)
 	if err != nil {
 		return mJobGroups, err
 	}
@@ -265,8 +265,8 @@ func (jg JobGroup) FindByGroupType(jobTypeID int64, setters ...Option) ([]models
 	return mJobGroups, nil
 }
 
-//GetTotalByJobType ...
-func (jg JobGroup) GetTotalByJobType(jobTypeID int64) (int64, error) {
+//GetTotalByType ...
+func (jg JobGroup) GetTotalByType(typeID int64) (int64, error) {
 	var err error
 	var ctx context.Context
 	var cancel context.CancelFunc
@@ -282,7 +282,7 @@ func (jg JobGroup) GetTotalByJobType(jobTypeID int64) (int64, error) {
 	}
 	defer stmt.Close()
 
-	if err = stmt.QueryRowContext(ctx, jobTypeID).Scan(&total); err != nil {
+	if err = stmt.QueryRowContext(ctx, typeID).Scan(&total); err != nil {
 		return 0, err
 	}
 	return total, nil

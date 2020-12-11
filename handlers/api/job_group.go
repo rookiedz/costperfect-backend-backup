@@ -188,3 +188,40 @@ func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
 	}
 	JSON(w, http.StatusOK, Total(total, mJobGroups))
 }
+
+//Jobs ...
+func (jg JobGroup) Jobs(w http.ResponseWriter, r *http.Request) {
+	var id, offset, limit, total int64
+	var mJobs []models.Job
+	var mdbJob mariadb.Job
+	var err error
+
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
+	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		return
+	}
+	mdbJob = mariadb.NewJob()
+	mJobs, err = mdbJob.FindByGroup(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
+	if err != nil {
+		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		return
+	}
+	total, err = mdbJob.GetTotal()
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(total, mJobs))
+}

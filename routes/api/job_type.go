@@ -21,7 +21,7 @@ func JobTypeAPIRouter() http.Handler {
 	})
 	r.Route("/{id:[0-9]+}", func(r chi.Router) {
 		r.Get("/", hdlJobType.Get)
-		r.Get("/jobgroups", hdlJobType.JobGroups)
+		r.Get("/groups", hdlJobType.Groups)
 		r.Put("/", hdlJobType.Update)
 		r.Delete("/", hdlJobType.Delete)
 	})
