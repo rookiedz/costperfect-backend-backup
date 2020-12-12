@@ -4,5 +4,5 @@ package models
 type Employer struct {
 	Model
 	Fullname  string `json:"fullname,omitempty"`
-	ProjectID string `json:"project_id"`
+	ProjectID int64  `json:"project_id"`
 }

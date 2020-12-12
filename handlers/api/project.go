@@ -26,6 +26,7 @@ func NewProject() Project {
 func (p Project) Create(w http.ResponseWriter, r *http.Request) {
 	var input models.Project
 	var mdbProject mariadb.Project
+	var mdbEmployer mariadb.Employer
 	var ok bool
 	var err error
 	var lastID int64
@@ -51,6 +52,13 @@ func (p Project) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
+	}
+	//Create Employer by project
+	mdbEmployer = mariadb.NewEmployer()
+	for _, value := range input.Employers {
+		var mEmployer models.Employer
+		mEmployer = models.Employer{ProjectID: lastID, Fullname: value}
+		mdbEmployer.Create(mEmployer)
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
@@ -148,10 +156,6 @@ func (p Project) Get(w http.ResponseWriter, r *http.Request) {
 	mProject, err = mdbProject.FindByID(id)
 	if err != nil {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
-		return
-	}
-	if mProject == (models.Project{}) {
-		JSON(w, http.StatusOK, NotFound(p.Endpoint))
 		return
 	}
 	JSON(w, http.StatusOK, Success(p.Endpoint, mProject))

@@ -5,7 +5,7 @@ import "costperfect/backend/models"
 //Employer ...
 type Employer struct {
 	Fullname  *string `validate:"required"`
-	ProjectID *string `validate:"required"`
+	ProjectID *int64  `validate:"required"`
 }
 
 //Match ...
