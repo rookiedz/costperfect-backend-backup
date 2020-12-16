@@ -7,19 +7,23 @@ type Contract struct {
 	Model
 	ProjectID                int64     `json:"project_id"`
 	ContractorID             int64     `json:"contractor_id"`
+	EmployerID               int64     `json:"employer_id"`
 	ContractNo               string    `json:"contract_no"`
 	LetterOfIntentNo         string    `json:"loi_no"`
-	Title                    string    `json:"title"`
+	Description              string    `json:"description"`
 	Value                    int64     `json:"value"`
 	Tax                      int64     `json:"tax"`
-	CreatedData              time.Time `json:"created_date"`
+	SigningDate              time.Time `json:"signing_date"`
 	BeginDate                time.Time `json:"begin_date"`
 	EndDate                  time.Time `json:"end_date"`
 	DeliveryDate             time.Time `json:"delivery_date"`
-	WarrantyPeriod           int64     `json:"warranty_period"`
-	TermOfPayment            string    `json:"term_of_payment"`
-	TermOfAdvancePayment     string    `json:"term_of_advance_payment"`
+	WarrantyDays             int64     `json:"warranty_days"`  //days จำนวนวัน
+	PaymentMethod            string    `json:"payment_method"` //percent, period
+	PaymentPercentage        int64     `json:"payment_percentage"`
+	PaymentPeriod            int64     `json:"payment_period"`
+	AdvancePaymentMethod     string    `json:"advance_payment_method"` //percent, period
 	AdvancePaymentPercentage int64     `json:"advance_payment_percentage"`
+	AdvancePaymentPeriod     int64     `json:"advance_payment_period"`
 	DeductConfig             int64     `json:"deduct_config"`
 	DeductPercentage         int64     `json:"deduct_percentage"`
 	WarrantyConfig           int64     `json:"warranty_config"`

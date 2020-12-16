@@ -33,6 +33,7 @@ func InitialRouter() http.Handler {
 
 	api.Initial()
 	r.Route("/api", func(r chi.Router) {
+		r.Mount("/employers", api.EmployerAPIRouter())
 		r.Mount("/contractors", api.ContractorAPIRouter())
 		r.Mount("/jobgroups", api.JobGroupAPIRouter())
 		r.Mount("/jobtypes", api.JobTypeAPIRouter())
