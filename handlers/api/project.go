@@ -193,6 +193,44 @@ func (p Project) All(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, Total(total, mProjects))
 }
 
+//Contractors ...
+func (p Project) Contractors(w http.ResponseWriter, r *http.Request) {
+	var id, total, offset, limit int64
+	var mContractors []models.Contractor
+	var mdbContractor mariadb.Contractor
+	var err error
+
+	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(p.Endpoint, err))
+		return
+	}
+
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		offset = 1
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 50
+	}
+
+	mdbContractor = mariadb.NewContractor()
+	mContractors, err = mdbContractor.FindByProject(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
+	if err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	total, err = mdbContractor.GetTotalByProject(id)
+	if err != nil {
+		if err != nil {
+			JSON(w, http.StatusOK, Err(p.Endpoint, err))
+			return
+		}
+	}
+	JSON(w, http.StatusOK, Total(total, mContractors))
+}
+
 //Employers ...
 func (p Project) Employers(w http.ResponseWriter, r *http.Request) {
 	var id, offset, limit, total int64

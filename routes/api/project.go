@@ -21,6 +21,7 @@ func ProjectAPIRouter() http.Handler {
 	})
 	r.Route("/{id:[0-9]+}", func(r chi.Router) {
 		r.Get("/", hdlProject.Get)
+		r.Get("/contractors", hdlProject.Contractors)
 		r.Get("/employers", hdlProject.Employers)
 		r.Put("/", hdlProject.Update)
 		r.Delete("/", hdlProject.Delete)

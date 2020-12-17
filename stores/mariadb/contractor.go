@@ -222,3 +222,73 @@ func (c Contractor) GetTotal() (int64, error) {
 	}
 	return total, nil
 }
+
+//FindByProject ...
+func (c Contractor) FindByProject(projectID int64, setters ...Option) ([]models.Contractor, error) {
+	var args *Options
+	var setter Option
+	args = &Options{Offset: 1, Limit: 50}
+	for _, setter = range setters {
+		setter(args)
+	}
+
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var rows *sql.Rows
+	var mContractors []models.Contractor
+	var err error
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE project_id = ? LIMIT ?, ?`, c.QueryColumn, c.TableName))
+	if err != nil {
+		return mContractors, err
+	}
+	defer stmt.Close()
+
+	rows, err = stmt.QueryContext(ctx, projectID, args.Offset-1, args.Limit)
+	if err != nil {
+		return mContractors, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mContractor models.Contractor
+		if err = rows.Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
+			return mContractors, err
+		}
+		mContractors = append(mContractors, mContractor)
+	}
+	if err = rows.Close(); err != nil {
+		return mContractors, err
+	}
+	if err = rows.Err(); err != nil {
+		return mContractors, err
+	}
+	return mContractors, nil
+}
+
+//GetTotalByProject ...
+func (c Contractor) GetTotalByProject(projectID int64) (int64, error) {
+	var err error
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(contractor_id) FROM %s WHERE project_id = ?`, c.TableName))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx, projectID).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
