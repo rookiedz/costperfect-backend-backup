@@ -20,14 +20,15 @@ type Contract struct {
 	WarrantyDays             int64     `json:"warranty_days"`  //days จำนวนวัน
 	PaymentMethod            string    `json:"payment_method"` //percent, period
 	PaymentPercentage        int64     `json:"payment_percentage"`
-	PaymentPeriod            int64     `json:"payment_period"`
+	PaymentPeriods           []Period  `json:"payment_periods"`
 	AdvancePaymentMethod     string    `json:"advance_payment_method"` //percent, period
 	AdvancePaymentPercentage int64     `json:"advance_payment_percentage"`
-	AdvancePaymentPeriod     int64     `json:"advance_payment_period"`
-	DeductConfig             int64     `json:"deduct_config"`
+	AdvancePaymentPeriods    []Period  `json:"advance_payment_periods"`
+	DeductMethod             int64     `json:"deduct_method"`
 	DeductPercentage         int64     `json:"deduct_percentage"`
-	WarrantyConfig           int64     `json:"warranty_config"`
+	WarrantyMethod           int64     `json:"warranty_method"`
 	WarrantyPercentage       int64     `json:"warranty_percentage"`
 	CollateralPercentage     int64     `json:"collateral_percentage"`
 	Note                     string    `json:"note"`
+	Attachments              []string  `json:"attachments"`
 }
