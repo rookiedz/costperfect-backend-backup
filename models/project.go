@@ -7,5 +7,7 @@ type Project struct {
 	OwnerName    string   `json:"owner_name"`
 	OwnerNameEng string   `json:"owner_name_eng"`
 	Manager      string   `json:"manager"`
+	Acronym      string   `json:"acronym"`
+	Expand       string   `json:"expand"`
 	Employers    []string `json:"employers,omitempty"`
 }

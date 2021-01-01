@@ -24,7 +24,9 @@ func NewProject() Project {
 		"project_name",
 		"project_owner_name",
 		"project_owner_name_eng",
-		"project_manager"}
+		"project_manager",
+		"project_acronym",
+		"project_expand"}
 	return Project{TableName: "projects", Columns: columns, QueryColumn: strings.Join(columns[:], ",")}
 }
 
@@ -41,14 +43,14 @@ func (p Project) Create(project models.Project) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (project_name, project_owner_name, project_owner_name_eng, project_manager, project_created_at, project_updated_at)VALUES(?,?,?,?,?,?)`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (project_name, project_owner_name, project_owner_name_eng, project_manager, project_acronym, project_expand, project_created_at, project_updated_at)VALUES(?,?,?,?,?,?,?,?)`, p.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, cds, cds)
+	res, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, project.Acronym, project.Expand, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -70,13 +72,13 @@ func (p Project) Update(id int64, project models.Project) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET project_name = ?, project_owner_name = ?, project_owner_name_eng = ?, project_manager = ?, project_updated_at = ?  WHERE project_id = ?`, p.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET project_name = ?, project_owner_name = ?, project_owner_name_eng = ?, project_manager = ?, project_acronym = ?, project_expand = ?, project_updated_at = ?  WHERE project_id = ?`, p.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, project.Name, project.OwnerName, project.OwnerNameEng, project.Manager, project.Acronym, project.Expand, cds, id); err != nil {
 		return err
 	}
 	return nil
