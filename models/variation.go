@@ -2,8 +2,8 @@ package models
 
 import "time"
 
-//SubContract ...
-type SubContract struct {
+//Variation ...
+type Variation struct {
 	Model
 	ContractID  int64     `json:"contract_id"`
 	JobID       int64     `json:"job_id"`
