@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Dec 16, 2020 at 04:09 PM
+-- Generation Time: Jan 01, 2021 at 06:33 PM
 -- Server version: 10.5.6-MariaDB-1:10.5.6+maria~focal
 -- PHP Version: 7.4.11
 
@@ -95,7 +95,8 @@ INSERT INTO `employers` (`employer_id`, `employer_fullname`, `project_id`, `empl
 (3, 'คุณเกศรัตน์ ณ สงขลา', 5, '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
 (4, 'คุณธวัชชัย วงศ์ศิริวรรณ', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
 (5, 'คุณศราวุธ พิมสาย', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
-(6, 'คุณเกศรัตน์ ณ สงขลา', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06');
+(6, 'คุณเกศรัตน์ ณ สงขลา', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
+(7, 'คุณธวัชชัย วงศ์ศิริวรรณ', 7, '2020-12-17 09:35:37', '2020-12-17 09:35:37');
 
 -- --------------------------------------------------------
 
@@ -203,6 +204,8 @@ CREATE TABLE `projects` (
   `project_owner_name` varchar(256) DEFAULT NULL,
   `project_owner_name_eng` varchar(256) DEFAULT NULL,
   `project_manager` varchar(256) DEFAULT NULL,
+  `project_acronym` varchar(3) NOT NULL,
+  `project_expand` varchar(3) NOT NULL,
   `project_created_at` datetime DEFAULT NULL,
   `project_updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -211,13 +214,14 @@ CREATE TABLE `projects` (
 -- Dumping data for table `projects`
 --
 
-INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `project_owner_name_eng`, `project_manager`, `project_created_at`, `project_updated_at`) VALUES
-(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:06:59', '2020-12-12 07:06:59'),
-(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:13:35', '2020-12-12 07:13:35'),
-(3, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:17:44', '2020-12-12 07:17:44'),
-(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:18:18', '2020-12-12 07:18:18'),
-(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
-(6, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:23:06', '2020-12-12 07:23:06');
+INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `project_owner_name_eng`, `project_manager`, `project_acronym`, `project_expand`, `project_created_at`, `project_updated_at`) VALUES
+(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:06:59', '2020-12-12 07:06:59'),
+(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:13:35', '2020-12-12 07:13:35'),
+(3, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:17:44', '2020-12-12 07:17:44'),
+(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:18:18', '2020-12-12 07:18:18'),
+(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
+(6, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
+(7, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัทเซ็นทรับพัฒนา จำกัด (มหาชน)', 'Central Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-17 09:35:37', '2020-12-17 09:35:37');
 
 -- --------------------------------------------------------
 
@@ -329,7 +333,7 @@ ALTER TABLE `contractors`
 -- AUTO_INCREMENT for table `employers`
 --
 ALTER TABLE `employers`
-  MODIFY `employer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `employer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -359,7 +363,7 @@ ALTER TABLE `owners`
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
