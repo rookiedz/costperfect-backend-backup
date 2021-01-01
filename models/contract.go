@@ -8,9 +8,9 @@ type Contract struct {
 	ProjectID                      int64         `json:"project_id"`
 	ContractorID                   int64         `json:"contractor_id"`
 	EmployerID                     int64         `json:"employer_id"`
+	Name                           string        `json:"name"`
 	ContractNo                     string        `json:"contract_no"`
 	LetterOfIntentNo               string        `json:"loi_no"`
-	Description                    string        `json:"description"`
 	Value                          int64         `json:"value"`
 	Tax                            int64         `json:"tax"`
 	TaxValue                       float64       `json:"tax_value"`
