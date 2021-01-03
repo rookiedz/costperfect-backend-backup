@@ -7,6 +7,7 @@ type Variation struct {
 	Model
 	ContractID  int64     `json:"contract_id"`
 	JobID       int64     `json:"job_id"`
+	No          string    `json:"no"`
 	Date        time.Time `json:"date"`
 	Description string    `json:"description"`
 	Value       int64     `json:"value"`
