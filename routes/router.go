@@ -35,8 +35,8 @@ func InitialRouter() http.Handler {
 	r.Route("/api", func(r chi.Router) {
 		r.Mount("/employers", api.EmployerAPIRouter())
 		r.Mount("/contractors", api.ContractorAPIRouter())
-		r.Mount("/jobgroups", api.JobGroupAPIRouter())
-		r.Mount("/jobtypes", api.JobTypeAPIRouter())
+		r.Mount("/jobs/groups", api.JobGroupAPIRouter())
+		r.Mount("/jobs/types", api.JobTypeAPIRouter())
 		r.Mount("/jobs", api.JobAPIRouter())
 		r.Mount("/owners", api.OwnerAPIRouter())
 		r.Mount("/projects", api.ProjectAPIRouter())
