@@ -216,7 +216,7 @@ func (jg JobGroup) Jobs(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
 		return
 	}
-	total, err = mdbJob.GetTotal()
+	total, err = mdbJob.GetTotalByGroup(id)
 	if err != nil {
 		if err != nil {
 			JSON(w, http.StatusOK, Err(jg.Endpoint, err))

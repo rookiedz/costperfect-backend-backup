@@ -215,7 +215,7 @@ func (jt JobType) Groups(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(jt.Endpoint, err))
 		return
 	}
-	total, err = mdbJobGroup.GetTotal()
+	total, err = mdbJobGroup.GetTotalByType(id)
 	if err != nil {
 		if err != nil {
 			JSON(w, http.StatusOK, Err(jt.Endpoint, err))
