@@ -22,6 +22,8 @@ func NewUser() User {
 	var columns []string
 	columns = []string{
 		"user_id",
+		"user_username",
+		"user_password",
 		"user_employee_id",
 		"user_fullname",
 		"user_address",
@@ -42,13 +44,13 @@ func (u User) Create(user models.User) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (user_employee_id, user_fullname, user_address, user_telephone, user_created_at, user_updated_at)VALUES(?, ?, ?, ?, ?, ?)`, u.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (user_username, user_password, user_employee_id, user_fullname, user_address, user_telephone, user_created_at, user_updated_at)VALUES(?, ?, ?, ?, ?, ?)`, u.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, user.EmployeeID, user.Fullname, user.Address, user.Telephone, cds, cds)
+	res, err = stmt.ExecContext(ctx,user.Username, user.Password, user.EmployeeID, user.Fullname, user.Address, user.Telephone, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -68,14 +70,14 @@ func (u User) Update(id int64, user models.User) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET user_employee_id = ?, user_fullname = ?, user_address = ?, user_telephone = ?, user_updated_at = ? WHERE user_id = ?`, u.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET user_username=?, user_password=?, user_employee_id = ?, user_fullname = ?, user_address = ?, user_telephone = ?, user_updated_at = ? WHERE user_id = ?`, u.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, user.EmployeeID, user.Fullname, user.Address, user.Telephone, cds, id)
+	res, err = stmt.ExecContext(ctx,user.Username, user.Password, user.EmployeeID, user.Fullname, user.Address, user.Telephone, cds, id)
 	if err != nil {
 		return err
 	}
@@ -188,7 +190,7 @@ func (u User) FindAll(settings ...Option) ([]models.User, error) {
 
 	for rows.Next() {
 		var mUser models.User
-		if err = rows.Scan(&mUser.ID, &mUser.EmployeeID, &mUser.Fullname, &mUser.Address, &mUser.Telephone); err != nil {
+		if err = rows.Scan(&mUser.ID, &mUser.Username, &mUser.Password, &mUser.EmployeeID, &mUser.Fullname, &mUser.Address, &mUser.Telephone); err != nil {
 			return mUsers, err
 		}
 		mUsers = append(mUsers, mUser)
@@ -218,7 +220,7 @@ func (u User) FindByID(id int64) (models.User, error) {
 		return mUser, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mUser.ID, &mUser.EmployeeID, &mUser.Fullname, &mUser.Address, &mUser.Telephone); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mUser.ID, &mUser.Username, &mUser.Password, &mUser.EmployeeID, &mUser.Fullname, &mUser.Address, &mUser.Telephone); err != nil {
 		if err == sql.ErrNoRows {
 			return mUser, nil
 		}
