@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 11, 2021 at 02:22 AM
+-- Generation Time: Jan 11, 2021 at 02:40 AM
 -- Server version: 10.5.7-MariaDB-1:10.5.7+maria~focal
 -- PHP Version: 7.4.11
 
@@ -227,7 +227,7 @@ INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `pro
 
 CREATE TABLE `users` (
   `user_id` int(10) UNSIGNED NOT NULL,
-  `user_username` varchar(20) NOT NULL,
+  `user_username` varchar(100) NOT NULL,
   `user_password` varchar(20) NOT NULL,
   `user_employee_id` varchar(20) DEFAULT NULL,
   `user_fullname` varchar(100) NOT NULL,
@@ -242,9 +242,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_password`, `user_employee_id`, `user_fullname`, `user_address`, `user_telephone`, `user_created_at`, `user_updated_at`) VALUES
-(11, '', '', '001', 'KATRAT NA-SONGKHLA', '79/141 หมู่บ้าน พฤกษาวิลล์ 12เอ ถนนสายไหม', '0875884594', '2021-01-09 23:03:52', '2021-01-09 23:03:52'),
-(12, '', '', '002', 'Sarawuth Pimsai', '79/52', '0918861050', '2021-01-09 23:04:01', '2021-01-09 23:04:01'),
-(13, '', '', '003', 'Sarawuth Pimsai', '79/52', '0918861050', '2021-01-09 23:04:11', '2021-01-09 23:04:11');
+(15, 'rookiedz@gmail.com', 'iLove@0102635', '001', 'Sarawuth Pimsai', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0809789718', '2021-01-11 09:37:16', '2021-01-11 09:37:16');
 
 --
 -- Indexes for dumped tables
@@ -303,7 +301,8 @@ ALTER TABLE `projects`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `user_username` (`user_username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -361,7 +360,7 @@ ALTER TABLE `projects`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
