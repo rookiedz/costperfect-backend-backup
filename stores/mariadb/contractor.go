@@ -43,7 +43,7 @@ func (c Contractor) Create(contractor models.Contractor) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_acronym, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?,?,?)`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_acronym, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?,?,?,?)`, c.TableName))
 	if err != nil {
 		return 0, err
 	}
