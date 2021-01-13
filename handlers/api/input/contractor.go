@@ -8,6 +8,7 @@ import (
 type Contractor struct {
 	Name      *string `json:"name" validate:"required"`
 	NameEng   *string `json:"name_eng" validate:"-"`
+	Acronym   *string `json:"acronym" validate:"required"`
 	Address   *string `json:"address" validate:"-"`
 	Telephone *string `json:"telephone" validate:"-"`
 	Fax       *string `json:"fax" validate:"-"`
@@ -20,6 +21,9 @@ func (c Contractor) Match(contractor *models.Contractor) {
 	}
 	if c.NameEng != nil {
 		contractor.NameEng = *c.NameEng
+	}
+	if c.Acronym != nil {
+		contractor.Acronym = *c.Acronym
 	}
 	if c.Address != nil {
 		contractor.Address = *c.Address

@@ -23,6 +23,7 @@ func NewContractor() Contractor {
 		"contractor_id",
 		"contractor_name",
 		"contractor_name_eng",
+		"contractor_acronym",
 		"contractor_address",
 		"contractor_telephone",
 		"contractor_fax"}
@@ -42,14 +43,14 @@ func (c Contractor) Create(contractor models.Contractor) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?,?,?)`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (contractor_name, contractor_name_eng, contractor_acronym, contractor_address, contractor_telephone, contractor_fax, contractor_created_at, contractor_updated_at)VALUES(?,?,?,?,?,?,?)`, c.TableName))
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, contractor.Name, contractor.NameEng, contractor.Address, contractor.Telephone, contractor.Fax, cds, cds)
+	res, err = stmt.ExecContext(ctx, contractor.Name, contractor.NameEng, contractor.Acronym, contractor.Address, contractor.Telephone, contractor.Fax, cds, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -71,13 +72,13 @@ func (c Contractor) Update(id int64, contractor models.Contractor) error {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contractor_name = ?, contractor_name_eng = ?, contractor_address = ?, contractor_telephone = ?, contractor_fax = ?, contractor_updated_at = ? WHERE contractor_id = ?`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contractor_name = ?, contractor_name_eng = ?, contractor_acronym = ?, contractor_address = ?, contractor_telephone = ?, contractor_fax = ?, contractor_updated_at = ? WHERE contractor_id = ?`, c.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, contractor.Name, contractor.NameEng, contractor.Address, contractor.Telephone, contractor.Fax, cds, id); err != nil {
+	if _, err = stmt.ExecContext(ctx, contractor.Name, contractor.NameEng, contractor.Acronym, contractor.Address, contractor.Telephone, contractor.Fax, cds, id); err != nil {
 		return err
 	}
 	return nil
@@ -144,7 +145,7 @@ func (c Contractor) FindByID(id int64) (models.Contractor, error) {
 		return mContractor, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Acronym, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
 		if err == sql.ErrNoRows {
 			return mContractor, nil
 		}
@@ -186,7 +187,7 @@ func (c Contractor) FindAll(setters ...Option) ([]models.Contractor, error) {
 
 	for rows.Next() {
 		var mContractor models.Contractor
-		if err = rows.Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
+		if err = rows.Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Acronym, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
 			return mContractors, err
 		}
 		mContractors = append(mContractors, mContractor)
@@ -256,7 +257,7 @@ func (c Contractor) FindByProject(projectID int64, setters ...Option) ([]models.
 
 	for rows.Next() {
 		var mContractor models.Contractor
-		if err = rows.Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
+		if err = rows.Scan(&mContractor.ID, &mContractor.Name, &mContractor.NameEng, &mContractor.Acronym, &mContractor.Address, &mContractor.Telephone, &mContractor.Fax); err != nil {
 			return mContractors, err
 		}
 		mContractors = append(mContractors, mContractor)
