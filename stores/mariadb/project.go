@@ -145,7 +145,7 @@ func (p Project) FindByID(id int64) (models.Project, error) {
 		return mProject, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager, &mProject.Acronym, &mProject.Expand); err != nil {
 		if err == sql.ErrNoRows {
 			return mProject, nil
 		}
@@ -187,7 +187,7 @@ func (p Project) FindAll(setters ...Option) ([]models.Project, error) {
 
 	for rows.Next() {
 		var mProject models.Project
-		if err = rows.Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager); err != nil {
+		if err = rows.Scan(&mProject.ID, &mProject.Name, &mProject.OwnerName, &mProject.OwnerNameEng, &mProject.Manager, &mProject.Acronym, &mProject.Expand); err != nil {
 			return mProjects, err
 		}
 		mProjects = append(mProjects, mProject)
