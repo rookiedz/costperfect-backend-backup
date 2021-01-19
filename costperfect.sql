@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 11, 2021 at 02:40 AM
--- Server version: 10.5.7-MariaDB-1:10.5.7+maria~focal
+-- Generation Time: Jan 19, 2021 at 04:36 AM
+-- Server version: 10.5.6-MariaDB-1:10.5.6+maria~focal
 -- PHP Version: 7.4.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -49,6 +49,7 @@ CREATE TABLE `contractors` (
   `contractor_id` int(11) NOT NULL,
   `contractor_name` varchar(256) NOT NULL,
   `contractor_name_eng` varchar(256) DEFAULT NULL,
+  `contractor_acronym` varchar(20) NOT NULL,
   `contractor_address` varchar(256) DEFAULT NULL,
   `contractor_telephone` varchar(100) DEFAULT NULL,
   `contractor_fax` varchar(100) DEFAULT NULL,
@@ -60,16 +61,10 @@ CREATE TABLE `contractors` (
 -- Dumping data for table `contractors`
 --
 
-INSERT INTO `contractors` (`contractor_id`, `contractor_name`, `contractor_name_eng`, `contractor_address`, `contractor_telephone`, `contractor_fax`, `contractor_created_at`, `contractor_updated_at`) VALUES
-(18, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '0001', '2020-12-10 06:05:35', '2020-12-10 06:52:24'),
-(19, 'ศราวุธ 002', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '222222', '2020-12-10 06:06:11', '2020-12-10 06:07:43'),
-(20, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '', '2020-12-10 06:07:05', '2020-12-10 06:33:49'),
-(21, 'sdfafa', 'fasfafa', 'fdsfsfaf', '21161611', '5454146546', '2020-12-10 06:20:42', '2020-12-10 06:28:21'),
-(22, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '1111111', '2020-12-10 06:23:29', '2020-12-10 06:25:13'),
-(23, 'Sarawuth Pimsai', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '5555555', '2020-12-10 06:23:37', '2020-12-10 06:52:15'),
-(24, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '010101', '2020-12-10 06:29:43', '2020-12-10 06:33:46'),
-(25, 'KATRAT NA-SONGKHLA', 'KATRAT NA-SONGKHLA', '79/141 หมู่บ้าน พฤกษาวิลล์ 12เอ ถนนสายไหม', '0918861050', '566666', '2020-12-10 06:29:54', '2020-12-10 06:55:25'),
-(26, 'ศราวุธ พิมสาย', 'ศราวุธ พิมสาย', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ', '0918861050', '46545661', '2020-12-10 06:34:46', '2020-12-10 06:34:46');
+INSERT INTO `contractors` (`contractor_id`, `contractor_name`, `contractor_name_eng`, `contractor_acronym`, `contractor_address`, `contractor_telephone`, `contractor_fax`, `contractor_created_at`, `contractor_updated_at`) VALUES
+(28, 'บริษัท เอลเม็ควิศวกรรม จำกัด', 'Elmech engineering Co., Ltd.', 'ELM/EE(BD)', '801/236 Moo 8, T.Kukod, Lumlookkar, Pathumthani 12130', '025236106', '025319204', '2021-01-12 16:07:07', '2021-01-14 14:06:11'),
+(29, 'บริษัท เวอธ อินโนเวชั่น จำกัด', 'Worth Innovation Co., Ltd.', 'WIN(LED)', '9-261 Moo 4 RamIntra Rd., Anudsawaree, Bangkean, Bangkok 10220, Thailand.', '029525330', '029525332', '2021-01-13 07:07:18', '2021-01-14 14:06:30'),
+(31, ' บริษัท เอลเม็ควิศวกรรม จำกัด', ' Elmech engineering Co., Ltd.', ' ELM/EE(SD)', ' 801/236 Moo 8, T.Kukod, Lumlookkar, Pathumthani 12130', '025236106', '025319204', '2021-01-13 07:45:29', '2021-01-13 07:47:16');
 
 -- --------------------------------------------------------
 
@@ -203,6 +198,8 @@ CREATE TABLE `projects` (
   `project_owner_name` varchar(256) DEFAULT NULL,
   `project_owner_name_eng` varchar(256) DEFAULT NULL,
   `project_manager` varchar(256) DEFAULT NULL,
+  `project_acronym` varchar(20) NOT NULL,
+  `project_expand` varchar(20) NOT NULL,
   `project_created_at` datetime DEFAULT NULL,
   `project_updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -211,13 +208,13 @@ CREATE TABLE `projects` (
 -- Dumping data for table `projects`
 --
 
-INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `project_owner_name_eng`, `project_manager`, `project_created_at`, `project_updated_at`) VALUES
-(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:06:59', '2020-12-12 07:06:59'),
-(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:13:35', '2020-12-12 07:13:35'),
-(3, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:17:44', '2020-12-12 07:17:44'),
-(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:18:18', '2020-12-12 07:18:18'),
-(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
-(6, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '2020-12-12 07:23:06', '2020-12-12 07:23:06');
+INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `project_owner_name_eng`, `project_manager`, `project_acronym`, `project_expand`, `project_created_at`, `project_updated_at`) VALUES
+(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:06:59', '2020-12-12 07:06:59'),
+(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:13:35', '2020-12-12 07:13:35'),
+(3, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:17:44', '2020-12-12 07:17:44'),
+(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:18:18', '2020-12-12 07:18:18'),
+(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
+(6, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:23:06', '2020-12-12 07:23:06');
 
 -- --------------------------------------------------------
 
@@ -242,7 +239,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `user_username`, `user_password`, `user_employee_id`, `user_fullname`, `user_address`, `user_telephone`, `user_created_at`, `user_updated_at`) VALUES
-(15, 'rookiedz@gmail.com', 'iLove@0102635', '001', 'Sarawuth Pimsai', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0809789718', '2021-01-11 09:37:16', '2021-01-11 09:37:16');
+(15, 'rookiedz@gmail.com', 'iLove@0102635', '001', 'Sarawuth Pimsai', '79/141 หมู่บ้านพฤกษาวิลล์ 12เอ ถนนสายไหม แขวงสายไหม เขตสายไหม จังหวัดกรุงเทพมหานคร 10220', '0809789718', '2021-01-11 09:37:16', '2021-01-12 16:01:49');
 
 --
 -- Indexes for dumped tables
@@ -318,7 +315,7 @@ ALTER TABLE `authors`
 -- AUTO_INCREMENT for table `contractors`
 --
 ALTER TABLE `contractors`
-  MODIFY `contractor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `contractor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `employers`
@@ -342,7 +339,7 @@ ALTER TABLE `job_groups`
 -- AUTO_INCREMENT for table `job_types`
 --
 ALTER TABLE `job_types`
-  MODIFY `job_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `job_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `owners`
