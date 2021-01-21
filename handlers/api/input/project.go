@@ -4,12 +4,13 @@ import "costperfect/backend/models"
 
 //Project ...
 type Project struct {
-	Name         *string `validate:"required"`
-	OwnerName    *string `validate:"required"`
-	OwnerNameEng *string `validate:"required"`
-	Manager      *string `validate:"required"`
-	Acronym      *string `validate:"required"`
-	Expand       *string `validate:"required"`
+	Name         *string   `validate:"required"`
+	OwnerName    *string   `validate:"required"`
+	OwnerNameEng *string   `validate:"required"`
+	Manager      *string   `validate:"required"`
+	Acronym      *string   `validate:"required"`
+	Expand       *string   `validate:"required"`
+	Employers    []*string ``
 }
 
 //Match ...
@@ -31,5 +32,10 @@ func (p Project) Match(project *models.Project) {
 	}
 	if p.Expand != nil {
 		project.Expand = *p.Expand
+	}
+	if p.Employers != nil {
+		for _, value := range p.Employers {
+			project.Employers = append(project.Employers, *value)
+		}
 	}
 }

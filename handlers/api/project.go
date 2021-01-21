@@ -70,6 +70,8 @@ func (p Project) Update(w http.ResponseWriter, r *http.Request) {
 	var input input.Project
 	var mProject models.Project
 	var mdbProject mariadb.Project
+	var mdbEmployer mariadb.Employer
+
 	var err error
 	var ok bool
 	var id int64
@@ -100,6 +102,18 @@ func (p Project) Update(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
 	}
+
+	mdbEmployer = mariadb.NewEmployer()
+	if err = mdbEmployer.DeleteByProject(id); err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	for _, value := range input.Employers {
+		var mEmployer models.Employer
+		mEmployer = models.Employer{ProjectID: id, Fullname: *value}
+		mdbEmployer.Create(mEmployer)
+	}
+
 	JSON(w, http.StatusOK, Success(p.Endpoint, NewEmptyData()))
 }
 
@@ -119,6 +133,7 @@ func (p Project) Delete(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
 	}
+
 	JSON(w, http.StatusOK, Success(p.Endpoint, NewEmptyData()))
 }
 
