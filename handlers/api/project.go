@@ -122,6 +122,7 @@ func (p Project) Delete(w http.ResponseWriter, r *http.Request) {
 	var id int64
 	var err error
 	var mdbProject mariadb.Project
+	var mdbEmployer mariadb.Employer
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
@@ -130,6 +131,11 @@ func (p Project) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	mdbProject = mariadb.NewProject()
 	if err = mdbProject.Delete(id); err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	mdbEmployer = mariadb.NewEmployer()
+	if err = mdbEmployer.DeleteByProject(id); err != nil {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
 	}
@@ -142,6 +148,7 @@ func (p Project) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	var ids models.IDs
 	var err error
 	var mdbProject mariadb.Project
+	var mdbEmployer mariadb.Employer
 
 	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
@@ -149,6 +156,11 @@ func (p Project) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	}
 	mdbProject = mariadb.NewProject()
 	if err = mdbProject.DeleteByIDs(ids.IDs); err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	mdbEmployer = mariadb.NewEmployer()
+	if err = mdbEmployer.DeleteByProjectIDs(ids.IDs); err != nil {
 		JSON(w, http.StatusOK, Err(p.Endpoint, err))
 		return
 	}

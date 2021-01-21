@@ -145,7 +145,27 @@ func (e Employer) DeleteByProject(id int64) error {
 	}
 	return nil
 }
+//DeleteByProjectIDs ...
+func (e Employer)DeleteByProjectIDs(ids []int64) error  {
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var idsString string
 
+	idsString = ArrayInt64ToString(ids, ",")
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`DELETE FROM %s WHERE project_id IN(%s)`, e.TableName, idsString))
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	if _, err = stmt.ExecContext(ctx, id); err != nil {
+		return err
+	}
+	return nil
+}
 //FindByID ...
 func (e Employer) FindByID(id int64) (models.Employer, error) {
 	var mEmployer models.Employer
