@@ -1,7 +1,6 @@
 package api
 
 import (
-	"costperfect/backend/handlers/api/input"
 	"costperfect/backend/models"
 	"costperfect/backend/stores/mariadb"
 	"encoding/json"
@@ -13,20 +12,20 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-//Contractor ...
-type Contractor struct {
+//Contract ...
+type Contract struct {
 	Endpoint string
 }
 
-//NewContractor ...
-func NewContractor() Contractor {
-	return Contractor{Endpoint: "contractors"}
+//NewContract ...
+func NewContract() Contract {
+	return Contract{Endpoint: "contracts"}
 }
 
 //Create ...
-func (c Contractor) Create(w http.ResponseWriter, r *http.Request) {
-	var input models.Contractor
-	var mdbContractor mariadb.Contractor
+func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
+	var input models.Contract
+	var mdbContract mariadb.Contract
 	var ok bool
 	var err error
 	var lastID int64
@@ -46,8 +45,8 @@ func (c Contractor) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	mdbContractor = mariadb.NewContractor()
-	lastID, err = mdbContractor.Create(input)
+	mdbContract = mariadb.NewContract()
+	lastID, err = mdbContract.Create(input)
 	if err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
@@ -58,10 +57,10 @@ func (c Contractor) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 //Update ...
-func (c Contractor) Update(w http.ResponseWriter, r *http.Request) {
-	var input input.Contractor
-	var mContractor models.Contractor
-	var mdbContractor mariadb.Contractor
+func (c Contract) Update(w http.ResponseWriter, r *http.Request) {
+	var input models.PContract
+	var mContract models.Contract
+	var mdbContract mariadb.Contract
 	var err error
 	var ok bool
 	var id int64
@@ -81,14 +80,14 @@ func (c Contractor) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	mdbContractor = mariadb.NewContractor()
-	mContractor, err = mdbContractor.FindByID(id)
+	mdbContract = mariadb.NewContract()
+	mContract, err = mdbContract.FindByID(id)
 	if err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
-	input.Match(&mContractor)
-	if err = mdbContractor.Update(id, mContractor); err != nil {
+	input.Match(&mContract)
+	if err = mdbContract.Update(id, mContract); err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
@@ -96,36 +95,18 @@ func (c Contractor) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 //Delete ...
-func (c Contractor) Delete(w http.ResponseWriter, r *http.Request) {
+func (c Contract) Delete(w http.ResponseWriter, r *http.Request) {
 	var id int64
 	var err error
-	var mdbContractor mariadb.Contractor
+	var mdbContract mariadb.Contract
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
 		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
 		return
 	}
-	mdbContractor = mariadb.NewContractor()
-	if err = mdbContractor.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
-		return
-	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, NewEmptyData()))
-}
-
-//DeleteByIDs ...
-func (c Contractor) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
-	var ids models.IDs
-	var err error
-	var mdbContractor mariadb.Contractor
-
-	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
-		return
-	}
-	mdbContractor = mariadb.NewContractor()
-	if err = mdbContractor.DeleteByIDs(ids.IDs); err != nil {
+	mdbContract = mariadb.NewContract()
+	if err = mdbContract.Delete(id); err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
@@ -133,35 +114,35 @@ func (c Contractor) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 }
 
 //Get ...
-func (c Contractor) Get(w http.ResponseWriter, r *http.Request) {
+func (c Contract) Get(w http.ResponseWriter, r *http.Request) {
 	var id int64
+	var mContract models.Contract
+	var mdbContract mariadb.Contract
 	var err error
-	var mContractor models.Contractor
-	var mdbContractor mariadb.Contractor
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
 		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
 		return
 	}
-	mdbContractor = mariadb.NewContractor()
-	mContractor, err = mdbContractor.FindByID(id)
+	mdbContract = mariadb.NewContract()
+	mContract, err = mdbContract.FindByID(id)
 	if err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
-	if reflect.DeepEqual(mContractor, models.Contractor{}) {
+	if reflect.DeepEqual(mContract, models.Contract{}) {
 		JSON(w, http.StatusOK, NotFound(c.Endpoint))
 		return
 	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, mContractor))
+	JSON(w, http.StatusOK, Success(c.Endpoint, mContract))
 }
 
 //All ...
-func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
+func (c Contract) All(w http.ResponseWriter, r *http.Request) {
 	var total, offset, limit int64
-	var mContractors []models.Contractor
-	var mdbContractor mariadb.Contractor
+	var mContracts []models.Contract
+	var mdbContract mariadb.Contract
 	var err error
 
 	offset, err = INT64(r.URL.Query().Get("offset"))
@@ -172,19 +153,18 @@ func (c Contractor) All(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		limit = 50
 	}
-
-	mdbContractor = mariadb.NewContractor()
-	mContractors, err = mdbContractor.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
+	mdbContract = mariadb.NewContract()
+	mContracts, err = mdbContract.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
 		JSON(w, http.StatusOK, Err(c.Endpoint, err))
 		return
 	}
-	total, err = mdbContractor.GetTotal()
+	total, err = mdbContract.GetTotal()
 	if err != nil {
 		if err != nil {
 			JSON(w, http.StatusOK, Err(c.Endpoint, err))
 			return
 		}
 	}
-	JSON(w, http.StatusOK, Total(total, mContractors))
+	JSON(w, http.StatusOK, Total(total, mContracts))
 }

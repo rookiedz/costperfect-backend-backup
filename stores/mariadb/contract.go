@@ -106,13 +106,13 @@ func (c Contract) Update(id int64, contract models.Contract) error {
 	var cds string
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET WHERE contract_id = ?`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contract_updated_at = ? WHERE contract_id = ?`, c.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx); err != nil {
+	if _, err = stmt.ExecContext(ctx, cds); err != nil {
 		return err
 	}
 	return nil
@@ -208,7 +208,37 @@ func (c Contract) DeleteByProjectIDs(ids []int64) error {
 
 //FindByID ...
 func (c Contract) FindByID(id int64) (models.Contract, error) {
-	return models.Contract{}, nil
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var err error
+	var mContract models.Contract
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE contract_id = ?`, c.QueryColumn, c.TableName))
+	if err != nil {
+		return mContract, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
+		&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+		&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
+		&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
+		&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
+		&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+		&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
+		&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
+		&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
+		&mContract.Note); err != nil {
+		if err == sql.ErrNoRows {
+			return mContract, nil
+		}
+		return mContract, err
+	}
+	return mContract, nil
 }
 
 //FindAll ...
@@ -219,7 +249,74 @@ func (c Contract) FindAll(setters ...Option) ([]models.Contract, error) {
 	for _, setter = range setters {
 		setter(args)
 	}
-	return []models.Contract{}, nil
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var rows *sql.Rows
+	var err error
+	var mContracts []models.Contract
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s ORDER BY contract_id DESC LIMIT ?, ?`, c.QueryColumn, c.TableName))
+	if err != nil {
+		return mContracts, err
+	}
+	defer stmt.Close()
+
+	rows, err = stmt.QueryContext(ctx, args.Offset-1, args.Limit)
+	if err != nil {
+		return mContracts, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var mContract models.Contract
+		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
+			&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
+			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
+			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
+			&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
+			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
+			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
+			&mContract.Note); err != nil {
+			return mContracts, err
+		}
+		mContracts = append(mContracts, mContract)
+	}
+	if err = rows.Close(); err != nil {
+		return mContracts, err
+	}
+	if err = rows.Err(); err != nil {
+		return mContracts, err
+	}
+	return mContracts, nil
+}
+
+//GetTotal ...
+func (c Contract) GetTotal() (int64, error) {
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var err error
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(contract_id) FROM %s`, c.TableName))
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 //FindAllByProject ...
@@ -230,5 +327,72 @@ func (c Contract) FindAllByProject(id int64, setters ...Option) ([]models.Contra
 	for _, setter = range setters {
 		setter(args)
 	}
-	return []models.Contract{}, nil
+
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var rows *sql.Rows
+	var mContracts []models.Contract
+	var err error
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE project_id = ? ORDER BY contract_id DESC LIMIT ?,?`, c.QueryColumn, c.TableName))
+	if err != nil {
+		return mContracts, err
+	}
+	defer stmt.Close()
+
+	rows, err = stmt.QueryContext(ctx, id)
+	if err != nil {
+		return mContracts, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var mContract models.Contract
+		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
+			&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
+			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
+			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
+			&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
+			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
+			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
+			&mContract.Note); err != nil {
+			return mContracts, err
+		}
+		mContracts = append(mContracts, mContract)
+	}
+	if err = rows.Close(); err != nil {
+		return mContracts, err
+	}
+	if err = rows.Err(); err != nil {
+		return mContracts, err
+	}
+	return mContracts, nil
+}
+
+//GetTotalByProject ...
+func (c Contract) GetTotalByProject(id int64) (int64, error) {
+	var ctx context.Context
+	var cancel context.CancelFunc
+	var stmt *sql.Stmt
+	var err error
+	var total int64
+
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT COUNT(contract_id) FROM %s WHERE project_id = ?`, c.TableName))
+	if err != nil {
+		return total, err
+	}
+	defer stmt.Close()
+
+	if err = stmt.QueryRowContext(ctx, id).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
 }
