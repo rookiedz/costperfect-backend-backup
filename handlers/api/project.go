@@ -220,6 +220,10 @@ func (p Project) All(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusOK, Total(total, mProjects))
 }
 
+//Contracts ...
+func (p Project) Contracts(w http.ResponseWriter, r *http.Request) {
+}
+
 //Contractors ...
 func (p Project) Contractors(w http.ResponseWriter, r *http.Request) {
 	var id, total, offset, limit int64
