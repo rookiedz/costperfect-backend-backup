@@ -12,7 +12,7 @@ type Contract struct {
 	ContractNo                     string        `json:"contract_no"`
 	LetterOfIntentNo               string        `json:"loi_no"`
 	Value                          float64       `json:"value"`
-	Tax                            int64         `json:"tax"`
+	Tax                            float64       `json:"tax"`
 	TaxValue                       float64       `json:"tax_value"`
 	NetValue                       float64       `json:"net_value"`
 	SigningDate                    time.Time     `json:"signing_date"`
@@ -36,29 +36,29 @@ type Contract struct {
 	WarrantyPercentage             float64       `json:"warranty_percentage"`
 	PerformanceBondPercentage      float64       `json:"performance_bond_percentage"` //หลักประกันการปฏิบัติงานตามสัญญา
 	RetentionMoneyMethod           int64         `json:"retention_money_method"`      //BEFORE, AFTER เงินประกันผลงาน
-	RetentionMoneyPercentage       string        `json:"retention_money_percentage"`
+	RetentionMoneyPercentage       float64       `json:"retention_money_percentage"`
 	Note                           string        `json:"note"`
 	Attachments                    []string      `json:"attachments"`
 }
 
 //PContract ...
 type PContract struct {
-	ProjectID                      *int64         `json:"project_id" validate:"required"`
-	ContractorID                   *int64         `json:"contractor_id" validate:"required"`
-	EmployerID                     *int64         `json:"employer_id" validate:"required"`
-	Name                           *string        `json:"name" validate:"required"`
-	ContractNo                     *string        `json:"contract_no" validate:"-"`
-	LetterOfIntentNo               *string        `json:"loi_no" validate:"-"`
-	Value                          *float64       `json:"value" validate:"required"`
-	Tax                            *int64         `json:"tax" validate:"required"`
-	TaxValue                       *float64       `json:"tax_value" validate:"required"`
-	NetValue                       *float64       `json:"net_value" validate:"required"`
-	SigningDate                    *time.Time     `json:"signing_date" validate:"required"`
-	BeginDate                      *time.Time     `json:"begin_date" validate:"required"`
-	EndDate                        *time.Time     `json:"end_date" validate:"required"`
-	DeliveryDate                   *time.Time     `json:"delivery_date" validate:"required"`
-	WarrantyDays                   *int64         `json:"warranty_days" validate:"required"` //days จำนวนวัน
-	PaymentMethod                  *int64         `json:"payment_method"`                    // WORKINGS, INSTALLMENT
+	ProjectID                      *int64         `json:"project_id"`
+	ContractorID                   *int64         `json:"contractor_id"`
+	EmployerID                     *int64         `json:"employer_id"`
+	Name                           *string        `json:"name"`
+	ContractNo                     *string        `json:"contract_no"`
+	LetterOfIntentNo               *string        `json:"loi_no"`
+	Value                          *float64       `json:"value"`
+	Tax                            *float64       `json:"tax"`
+	TaxValue                       *float64       `json:"tax_value"`
+	NetValue                       *float64       `json:"net_value"`
+	SigningDate                    *time.Time     `json:"signing_date"`
+	BeginDate                      *time.Time     `json:"begin_date"`
+	EndDate                        *time.Time     `json:"end_date"`
+	DeliveryDate                   *time.Time     `json:"delivery_date"`
+	WarrantyDays                   *int64         `json:"warranty_days"`  //days จำนวนวัน
+	PaymentMethod                  *int64         `json:"payment_method"` // WORKINGS, INSTALLMENT
 	PaymentPercentage              *float64       `json:"payment_percentage"`
 	PaymentAmout                   *float64       `json:"payment_amout"`
 	PaymentInstallments            *int64         `json:"payment_installments"`
@@ -74,7 +74,7 @@ type PContract struct {
 	WarrantyPercentage             *float64       `json:"warranty_percentage"`
 	PerformanceBondPercentage      *float64       `json:"performance_bond_percentage"` //หลักประกันการปฏิบัติงานตามสัญญา
 	RetentionMoneyMethod           *int64         `json:"retention_money_method"`      //BEFORE, AFTER เงินประกันผลงาน
-	RetentionMoneyPercentage       *string        `json:"retention_money_percentage"`
+	RetentionMoneyPercentage       *float64       `json:"retention_money_percentage"`
 	Note                           *string        `json:"note"`
 	Attachments                    []*string      `json:"attachments"`
 }

@@ -222,6 +222,39 @@ func (p Project) All(w http.ResponseWriter, r *http.Request) {
 
 //Contracts ...
 func (p Project) Contracts(w http.ResponseWriter, r *http.Request) {
+	var id, total, offset, limit int64
+	var mContracts []models.Contract
+	var mdbContract mariadb.Contract
+	var err error
+
+	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(p.Endpoint, err))
+		return
+	}
+	offset, err = INT64(r.URL.Query().Get("offset"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(p.Endpoint, err))
+		return
+	}
+	limit, err = INT64(r.URL.Query().Get("limit"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(p.Endpoint, err))
+		return
+	}
+
+	mdbContract = mariadb.NewContract()
+	mContracts, err = mdbContract.FindAllByProject(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
+	if err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	total, err = mdbContract.GetTotalByProject(id)
+	if err != nil {
+		JSON(w, http.StatusOK, Err(p.Endpoint, err))
+		return
+	}
+	JSON(w, http.StatusOK, Total(total, mContracts))
 }
 
 //Contractors ...
