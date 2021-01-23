@@ -13,13 +13,11 @@ import (
 )
 
 //JobGroup ...
-type JobGroup struct {
-	Endpoint string
-}
+type JobGroup struct{}
 
 //NewJobGroup ...
 func NewJobGroup() JobGroup {
-	return JobGroup{Endpoint: "job_groups"}
+	return JobGroup{}
 }
 
 //Create ...
@@ -33,28 +31,28 @@ func (jg JobGroup) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
-			JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
-		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
 	lastID, err = mdbJobGroup.Create(input)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success(jg.Endpoint, res))
+	JSON(w, http.StatusOK, Success(res))
 }
 
 //Update ...
@@ -68,31 +66,31 @@ func (jg JobGroup) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
 	mJobGroup, err = mdbJobGroup.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	input.Match(&mJobGroup)
 	if err = mdbJobGroup.Update(id, mJobGroup); err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(jg.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Delete ...
@@ -103,15 +101,15 @@ func (jg JobGroup) Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
 	if err = mdbJobGroup.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(jg.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //DeleteByIDs ...
@@ -121,15 +119,15 @@ func (jg JobGroup) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	var mdbJobGroup mariadb.JobGroup
 
 	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
 	if err = mdbJobGroup.DeleteByIDs(ids.IDs); err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(jg.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Get ...
@@ -141,20 +139,20 @@ func (jg JobGroup) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbJobGroup = mariadb.NewJobGroup()
 	mJobGroup, err = mdbJobGroup.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if mJobGroup == (models.JobGroup{}) {
-		JSON(w, http.StatusOK, NotFound(jg.Endpoint))
+		JSON(w, http.StatusOK, NotFound())
 		return
 	}
-	JSON(w, http.StatusOK, Success(jg.Endpoint, mJobGroup))
+	JSON(w, http.StatusOK, Success(mJobGroup))
 }
 
 //All ...
@@ -176,13 +174,13 @@ func (jg JobGroup) All(w http.ResponseWriter, r *http.Request) {
 	mdbJobGroup = mariadb.NewJobGroup()
 	mJobGroups, err = mdbJobGroup.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	total, err = mdbJobGroup.GetTotal()
 	if err != nil {
 		if err != nil {
-			JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}
@@ -207,19 +205,19 @@ func (jg JobGroup) Jobs(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbJob = mariadb.NewJob()
 	mJobs, err = mdbJob.FindByGroup(id, mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	total, err = mdbJob.GetTotalByGroup(id)
 	if err != nil {
 		if err != nil {
-			JSON(w, http.StatusOK, Err(jg.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}

@@ -13,13 +13,11 @@ import (
 )
 
 //Job ...
-type Job struct {
-	Endpoint string
-}
+type Job struct{}
 
 //NewJob ...
 func NewJob() Job {
-	return Job{Endpoint: "jobs"}
+	return Job{}
 }
 
 //Create ...
@@ -33,28 +31,28 @@ func (j Job) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
-			JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
-		JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Err(j.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}
 	mdbJob = mariadb.NewJob()
 	lastID, err = mdbJob.Create(input)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success(j.Endpoint, res))
+	JSON(w, http.StatusOK, Success(res))
 }
 
 //Update ...
@@ -68,35 +66,35 @@ func (j Job) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
-			JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
-		JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
 	}
 	mdbJob = mariadb.NewJob()
 	mJob, err = mdbJob.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	input.Match(&mJob)
 	if err = mdbJob.Update(id, mJob); err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(j.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Delete ...
@@ -107,15 +105,15 @@ func (j Job) Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbJob = mariadb.NewJob()
 	if err = mdbJob.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(j.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //DeleteByIDs ...
@@ -125,15 +123,15 @@ func (j Job) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	var mdbJob mariadb.Job
 
 	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	mdbJob = mariadb.NewJob()
 	if err = mdbJob.DeleteByIDs(ids.IDs); err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(j.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Get ...
@@ -145,20 +143,20 @@ func (j Job) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(j.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbJob = mariadb.NewJob()
 	mJob, err = mdbJob.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if mJob == (models.Job{}) {
-		JSON(w, http.StatusOK, NotFound(j.Endpoint))
+		JSON(w, http.StatusOK, NotFound())
 		return
 	}
-	JSON(w, http.StatusOK, Success(j.Endpoint, mJob))
+	JSON(w, http.StatusOK, Success(mJob))
 }
 
 //All ...
@@ -180,13 +178,13 @@ func (j Job) All(w http.ResponseWriter, r *http.Request) {
 	mdbJob = mariadb.NewJob()
 	mJobs, err = mdbJob.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(j.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	total, err = mdbJob.GetTotal()
 	if err != nil {
 		if err != nil {
-			JSON(w, http.StatusOK, Err(j.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}

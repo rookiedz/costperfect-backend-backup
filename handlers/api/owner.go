@@ -13,13 +13,11 @@ import (
 )
 
 //Owner ...
-type Owner struct {
-	Endpoint string
-}
+type Owner struct{}
 
 //NewOwner ...
 func NewOwner() Owner {
-	return Owner{Endpoint: "owners"}
+	return Owner{}
 }
 
 //Create ...
@@ -33,28 +31,28 @@ func (o Owner) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
-			JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
-		JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Err(o.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}
 	mdbOwner = mariadb.NewOwner()
 	lastID, err = mdbOwner.Create(input)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success(o.Endpoint, res))
+	JSON(w, http.StatusOK, Success(res))
 }
 
 //Update ...
@@ -68,31 +66,31 @@ func (o Owner) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
 	}
 	mdbOwner = mariadb.NewOwner()
 	mOwner, err = mdbOwner.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	input.Match(&mOwner)
 	if err = mdbOwner.Update(id, mOwner); err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(o.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Delete ...
@@ -103,15 +101,15 @@ func (o Owner) Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbOwner = mariadb.NewOwner()
 	if err = mdbOwner.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(o.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //DeleteByIDs ...
@@ -121,15 +119,15 @@ func (o Owner) DeleteByIDs(w http.ResponseWriter, r *http.Request) {
 	var mdbOwner mariadb.Owner
 
 	if err = json.NewDecoder(r.Body).Decode(&ids); err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	mdbOwner = mariadb.NewOwner()
 	if err = mdbOwner.DeleteByIDs(ids.IDs); err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(o.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Get ...
@@ -141,20 +139,20 @@ func (o Owner) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(o.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbOwner = mariadb.NewOwner()
 	mOwner, err = mdbOwner.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if mOwner == (models.Owner{}) {
-		JSON(w, http.StatusOK, NotFound(o.Endpoint))
+		JSON(w, http.StatusOK, NotFound())
 		return
 	}
-	JSON(w, http.StatusOK, Success(o.Endpoint, mOwner))
+	JSON(w, http.StatusOK, Success(mOwner))
 }
 
 //All ...
@@ -167,8 +165,8 @@ func (o Owner) All(w http.ResponseWriter, r *http.Request) {
 	mdbOwner = mariadb.NewOwner()
 	mOwners, err = mdbOwner.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(o.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(o.Endpoint, mOwners))
+	JSON(w, http.StatusOK, Success(mOwners))
 }

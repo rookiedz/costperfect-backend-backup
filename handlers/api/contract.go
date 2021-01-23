@@ -13,13 +13,11 @@ import (
 )
 
 //Contract ...
-type Contract struct {
-	Endpoint string
-}
+type Contract struct{}
 
 //NewContract ...
 func NewContract() Contract {
-	return Contract{Endpoint: "contracts"}
+	return Contract{}
 }
 
 //Create ...
@@ -33,27 +31,27 @@ func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
-			JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
-		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Err(c.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}
 	mdbContract = mariadb.NewContract()
 	lastID, err = mdbContract.Create(input)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
-	JSON(w, http.StatusOK, Success(c.Endpoint, res))
+	JSON(w, http.StatusOK, Success(res))
 }
 
 //Update ...
@@ -67,31 +65,31 @@ func (c Contract) Update(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
-		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	if err = validate.Struct(input); err != nil {
 		if _, ok = err.(*validator.InvalidValidationError); ok {
-			JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+			JSON(w, http.StatusOK, Failure(err))
 			return
 		}
 	}
 	mdbContract = mariadb.NewContract()
 	mContract, err = mdbContract.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	input.Match(&mContract)
 	if err = mdbContract.Update(id, mContract); err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Delete ...
@@ -102,15 +100,15 @@ func (c Contract) Delete(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbContract = mariadb.NewContract()
 	if err = mdbContract.Delete(id); err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, NewEmptyData()))
+	JSON(w, http.StatusOK, Success(NewEmptyData()))
 }
 
 //Get ...
@@ -122,20 +120,20 @@ func (c Contract) Get(w http.ResponseWriter, r *http.Request) {
 
 	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
 	if err != nil {
-		JSON(w, http.StatusOK, Failure(c.Endpoint, err))
+		JSON(w, http.StatusOK, Failure(err))
 		return
 	}
 	mdbContract = mariadb.NewContract()
 	mContract, err = mdbContract.FindByID(id)
 	if err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	if reflect.DeepEqual(mContract, models.Contract{}) {
-		JSON(w, http.StatusOK, NotFound(c.Endpoint))
+		JSON(w, http.StatusOK, NotFound())
 		return
 	}
-	JSON(w, http.StatusOK, Success(c.Endpoint, mContract))
+	JSON(w, http.StatusOK, Success(mContract))
 }
 
 //All ...
@@ -156,13 +154,13 @@ func (c Contract) All(w http.ResponseWriter, r *http.Request) {
 	mdbContract = mariadb.NewContract()
 	mContracts, err = mdbContract.FindAll(mariadb.WithOffset(offset), mariadb.WithLimit(limit))
 	if err != nil {
-		JSON(w, http.StatusOK, Err(c.Endpoint, err))
+		JSON(w, http.StatusOK, Err(err))
 		return
 	}
 	total, err = mdbContract.GetTotal()
 	if err != nil {
 		if err != nil {
-			JSON(w, http.StatusOK, Err(c.Endpoint, err))
+			JSON(w, http.StatusOK, Err(err))
 			return
 		}
 	}

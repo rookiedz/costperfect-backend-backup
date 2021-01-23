@@ -17,11 +17,8 @@ func NewEmptyData() EmptyData {
 }
 
 //Success ...
-func Success(endpoint string, data interface{}) Data {
-	var entry map[string]interface{}
-	entry = make(map[string]interface{})
-	entry[endpoint] = data
-	return Data{Status: "success", Data: entry}
+func Success(data interface{}) Data {
+	return Data{Status: "success", Data: data}
 }
 
 //Total ...
@@ -30,25 +27,16 @@ func Total(total int64, data interface{}) Data {
 }
 
 //NotFound ...
-func NotFound(endpoint string) Data {
-	var data map[string]EmptyData
-	data = make(map[string]EmptyData)
-	data[endpoint] = EmptyData{}
-	return Data{Status: "success", Data: data}
+func NotFound() Data {
+	return Data{Status: "success", Data: EmptyData{}}
 }
 
 //Failure ...
-func Failure(endpoint string, err error) Data {
-	var data map[string]EmptyData
-	data = make(map[string]EmptyData)
-	data[endpoint] = EmptyData{}
-	return Data{Status: "failure", Message: err.Error(), Data: data}
+func Failure(err error) Data {
+	return Data{Status: "failure", Message: err.Error(), Data: EmptyData{}}
 }
 
 //Err ...
-func Err(endpoint string, err error) Data {
-	var data map[string]EmptyData
-	data = make(map[string]EmptyData)
-	data[endpoint] = EmptyData{}
-	return Data{Status: "error", Message: err.Error(), Data: data}
+func Err(err error) Data {
+	return Data{Status: "error", Message: err.Error(), Data: EmptyData{}}
 }
