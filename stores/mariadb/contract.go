@@ -64,7 +64,6 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 	var stmt *sql.Stmt
 	var res sql.Result
 	var err error
-	var lastID int64
 	var cds string
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
@@ -72,7 +71,7 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 
 	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (%s, contract_created_at, contract_updated_at)VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, c.TableName, c.InsertColumn))
 	if err != nil {
-		return lastID, nil
+		return 0, nil
 	}
 	defer stmt.Close()
 
@@ -90,11 +89,7 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	lastID, err = res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	return lastID, nil
+	return res.LastInsertId()
 }
 
 //Update ...

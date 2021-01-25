@@ -20,6 +20,7 @@ func ContractAPIRouter() http.Handler {
 	})
 	r.Route("/{id:[0-9]+}", func(r chi.Router) {
 		r.Get("/", hdlContract.Get)
+		r.Get("/installments/{relations:[a-zA-Z]+}", hdlContract.Installments)
 		r.Put("/", hdlContract.Update)
 		r.Delete("/", hdlContract.Delete)
 	})

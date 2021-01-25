@@ -24,6 +24,7 @@ func NewContract() Contract {
 func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 	var input models.Contract
 	var mdbContract mariadb.Contract
+	var mdbInstallment mariadb.Installment
 	var ok bool
 	var err error
 	var lastID int64
@@ -48,6 +49,19 @@ func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		JSON(w, http.StatusOK, Err(err))
 		return
+	}
+	mdbInstallment = mariadb.NewInstallment()
+	//Create Payment Installment by contract
+	for no, value := range input.PaymentInstallmentValues {
+		var mInstallment models.Installment
+		mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "payment"}
+		mdbInstallment.Create(mInstallment)
+	}
+	//Create Advance Payment Installment by contract
+	for no, value := range input.AdvancePaymentInstallmentValues {
+		var mInstallment models.Installment
+		mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "advance"}
+		mdbInstallment.Create(mInstallment)
 	}
 	res = make(map[string]int64)
 	res["last_id"] = lastID
@@ -165,4 +179,27 @@ func (c Contract) All(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	JSON(w, http.StatusOK, Total(total, mContracts))
+}
+
+//Installments ...
+func (c Contract) Installments(w http.ResponseWriter, r *http.Request) {
+	var id int64
+	var mInstallments []models.Installment
+	var mdbInstallment mariadb.Installment
+	var err error
+	var relations string
+
+	id, err = ID64(chi.URLParamFromCtx(r.Context(), "id"))
+	if err != nil {
+		JSON(w, http.StatusOK, Failure(err))
+		return
+	}
+	relations = chi.URLParamFromCtx(r.Context(), "relations")
+	mdbInstallment = mariadb.NewInstallment()
+	mInstallments, err = mdbInstallment.FindByRelations(id, relations)
+	if err != nil {
+		JSON(w, http.StatusOK, mInstallments)
+		return
+	}
+	JSON(w, http.StatusOK, Success(mInstallments))
 }
