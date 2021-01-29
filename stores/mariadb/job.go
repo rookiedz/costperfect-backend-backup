@@ -131,16 +131,26 @@ func (j Job) FindByID(id int64) (models.Job, error) {
 	var cancel context.CancelFunc
 	var stmt *sql.Stmt
 	var err error
+	var joinQuery string
 
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`SELECT %s FROM %s WHERE job_id = ?`, j.QueryColumn, j.TableName))
+	joinQuery = fmt.Sprintf(`SELECT job_id,
+	job_groups.job_group_id,
+	job_types.job_type_id,
+	job_description,
+	job_groups.job_group_label,
+	job_types.job_type_label 
+	FROM %s 
+	JOIN job_groups ON jobs.job_group_id = job_groups.job_group_id 
+	JOIN job_types ON job_groups.job_type_id = job_types.job_type_id 
+	WHERE jobs.job_id = ?`, j.TableName)
+	stmt, err = db.PrepareContext(ctx, joinQuery)
 	if err != nil {
 		return mJob, err
 	}
 	defer stmt.Close()
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mJob.ID, &mJob.TypeID, &mJob.GroupID, &mJob.Description); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mJob.ID, &mJob.GroupID, &mJob.TypeID, &mJob.Description, &mJob.GroupLabel, &mJob.TypeLabel); err != nil {
 		if err == sql.ErrNoRows {
 			return mJob, nil
 		}
