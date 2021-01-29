@@ -25,6 +25,7 @@ func NewContract() Contract {
 		"project_id",
 		"contractor_id",
 		"employer_id",
+		"job_id",
 		"contract_name",
 		"contract_no",
 		"contract_loi_no",
@@ -77,7 +78,7 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 
 	cds = CurrentDatetimeString()
 	res, err = stmt.ExecContext(ctx, contract.ProjectID, contract.ContractorID, contract.EmployerID,
-		contract.Name, contract.ContractNo, contract.LetterOfIntentNo, contract.Value,
+		contract.JobID, contract.Name, contract.ContractNo, contract.LetterOfIntentNo, contract.Value,
 		contract.Tax, contract.TaxValue, contract.NetValue, contract.SigningDate,
 		contract.BeginDate, contract.EndDate, contract.DeliveryDate, contract.WarrantyDays,
 		contract.PaymentMethod, contract.PaymentPercentage, contract.PaymentAmout,
@@ -219,7 +220,7 @@ func (c Contract) FindByID(id int64) (models.Contract, error) {
 	defer stmt.Close()
 
 	if err = stmt.QueryRowContext(ctx, id).Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-		&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+		&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 		&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 		&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
 		&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
@@ -269,7 +270,7 @@ func (c Contract) FindAll(setters ...Option) ([]models.Contract, error) {
 	for rows.Next() {
 		var mContract models.Contract
 		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-			&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
 			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
@@ -347,7 +348,7 @@ func (c Contract) FindAllByProject(id int64, setters ...Option) ([]models.Contra
 	for rows.Next() {
 		var mContract models.Contract
 		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-			&mContract.EmployerID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
+			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
 			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,

@@ -8,6 +8,7 @@ type Contract struct {
 	ProjectID                       int64     `json:"project_id"`
 	ContractorID                    int64     `json:"contractor_id"`
 	EmployerID                      int64     `json:"employer_id"`
+	JobID                           int64     `json:"job_id"`
 	Name                            string    `json:"name"`
 	ContractNo                      string    `json:"contract_no"`
 	LetterOfIntentNo                string    `json:"loi_no"`
@@ -46,6 +47,7 @@ type PContract struct {
 	ProjectID                       *int64     `json:"project_id"`
 	ContractorID                    *int64     `json:"contractor_id"`
 	EmployerID                      *int64     `json:"employer_id"`
+	JobID                           *int64     `json:"job_id"`
 	Name                            *string    `json:"name"`
 	ContractNo                      *string    `json:"contract_no"`
 	LetterOfIntentNo                *string    `json:"loi_no"`
@@ -89,6 +91,9 @@ func (pc PContract) Match(contract *Contract) {
 	}
 	if pc.EmployerID != nil {
 		contract.EmployerID = *pc.EmployerID
+	}
+	if pc.JobID != nil {
+		contract.JobID = *pc.JobID
 	}
 	if pc.Name != nil {
 		contract.Name = *pc.Name
