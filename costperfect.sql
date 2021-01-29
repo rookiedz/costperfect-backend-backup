@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 19, 2021 at 04:36 AM
+-- Generation Time: Jan 29, 2021 at 04:55 PM
 -- Server version: 10.5.6-MariaDB-1:10.5.6+maria~focal
 -- PHP Version: 7.4.11
 
@@ -69,6 +69,50 @@ INSERT INTO `contractors` (`contractor_id`, `contractor_name`, `contractor_name_
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `contracts`
+--
+
+CREATE TABLE `contracts` (
+  `contract_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  `contractor_id` int(11) NOT NULL,
+  `employer_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `contract_name` varchar(256) NOT NULL,
+  `contract_no` varchar(256) NOT NULL,
+  `contract_loi_no` varchar(256) NOT NULL,
+  `contract_value` float(20,2) NOT NULL,
+  `contract_tax` float(3,2) NOT NULL,
+  `contract_tax_value` float(20,2) NOT NULL,
+  `contract_net_value` float(20,2) NOT NULL,
+  `contract_signing_date` date NOT NULL,
+  `contract_begin_date` date NOT NULL,
+  `contract_end_date` date NOT NULL,
+  `contract_delivery_date` date NOT NULL,
+  `contract_warranty_days` int(11) NOT NULL,
+  `contract_payment_method` varchar(20) NOT NULL,
+  `contract_payment_percentage` float(3,2) DEFAULT NULL,
+  `contract_payment_amout` float(20,2) NOT NULL,
+  `contract_payment_installments` int(11) DEFAULT NULL,
+  `contract_advance_payment_method` varchar(20) NOT NULL,
+  `contract_advance_payment_percentage` float(3,2) DEFAULT NULL,
+  `contract_advance_payment_amout` float(20,2) NOT NULL,
+  `contract_advance_payment_installments` int(11) DEFAULT NULL,
+  `contract_deduct_method` varchar(20) NOT NULL,
+  `contract_deduct_percentage` float(3,2) DEFAULT NULL,
+  `contract_warranty_method` varchar(20) NOT NULL,
+  `contract_warranty_percentage` float(3,2) DEFAULT NULL,
+  `contract_performance_bond_percentage` float(3,2) DEFAULT NULL,
+  `contract_retention_money_method` varchar(20) NOT NULL,
+  `contract_retention_money_percentage` float(3,2) NOT NULL,
+  `contract_note` text DEFAULT NULL,
+  `contract_created_at` datetime DEFAULT NULL,
+  `contract_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `employers`
 --
 
@@ -90,7 +134,27 @@ INSERT INTO `employers` (`employer_id`, `employer_fullname`, `project_id`, `empl
 (3, 'คุณเกศรัตน์ ณ สงขลา', 5, '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
 (4, 'คุณธวัชชัย วงศ์ศิริวรรณ', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
 (5, 'คุณศราวุธ พิมสาย', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
-(6, 'คุณเกศรัตน์ ณ สงขลา', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06');
+(6, 'คุณเกศรัตน์ ณ สงขลา', 6, '2020-12-12 07:23:06', '2020-12-12 07:23:06'),
+(7, 'Sarawuth Pimsai', 1, '2021-01-22 08:38:50', '2021-01-22 08:38:50'),
+(8, 'Ketrat Na Songkhla', 2, '2021-01-22 08:39:35', '2021-01-22 08:39:35'),
+(9, 'Sarawuth Pimsai', 2, '2021-01-22 08:39:35', '2021-01-22 08:39:35'),
+(10, 'Kawinthida Pimsai', 2, '2021-01-22 08:39:35', '2021-01-22 08:39:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `installments`
+--
+
+CREATE TABLE `installments` (
+  `installment_id` int(11) NOT NULL,
+  `installment_no` int(11) NOT NULL,
+  `installment_value` int(11) NOT NULL,
+  `installment_relations` varchar(20) NOT NULL,
+  `contract_id` int(11) NOT NULL,
+  `installment_created_at` datetime NOT NULL,
+  `installment_updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -209,11 +273,11 @@ CREATE TABLE `projects` (
 --
 
 INSERT INTO `projects` (`project_id`, `project_name`, `project_owner_name`, `project_owner_name_eng`, `project_manager`, `project_acronym`, `project_expand`, `project_created_at`, `project_updated_at`) VALUES
-(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:06:59', '2020-12-12 07:06:59'),
-(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:13:35', '2020-12-12 07:13:35'),
+(1, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:06:59', '2021-01-22 08:38:50'),
+(2, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:13:35', '2021-01-22 08:39:35'),
 (3, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:17:44', '2020-12-12 07:17:44'),
-(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:18:18', '2020-12-12 07:18:18'),
-(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:22:47', '2020-12-12 07:22:47'),
+(4, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:18:18', '2021-01-21 11:28:54'),
+(5, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:22:47', '2021-01-21 11:14:58'),
 (6, 'โครงการ CENTRAL PLAZA MAHACHAI', 'บริษัท เซ็นทรัลพัฒนา จำกัด (มหาชน)', 'Centra Pattana Public Company Limited', 'Trustry Project Management Co., Ltd.', '', '', '2020-12-12 07:23:06', '2020-12-12 07:23:06');
 
 -- --------------------------------------------------------
@@ -258,10 +322,35 @@ ALTER TABLE `contractors`
   ADD PRIMARY KEY (`contractor_id`);
 
 --
+-- Indexes for table `contracts`
+--
+ALTER TABLE `contracts`
+  ADD PRIMARY KEY (`contract_id`),
+  ADD KEY `idx_project_id` (`project_id`),
+  ADD KEY `idx_contractor_id` (`contractor_id`),
+  ADD KEY `idx_employer_id` (`employer_id`),
+  ADD KEY `idx_contract_name` (`contract_name`),
+  ADD KEY `idx_contract_no` (`contract_no`),
+  ADD KEY `idx_contract_loi_no` (`contract_loi_no`),
+  ADD KEY `idx_contract_signing_date` (`contract_signing_date`),
+  ADD KEY `idx_contract_begin_date` (`contract_begin_date`),
+  ADD KEY `idx_contract_end_date` (`contract_end_date`),
+  ADD KEY `idx_contract_delivery_date` (`contract_delivery_date`),
+  ADD KEY `idx_job_id` (`job_id`);
+
+--
 -- Indexes for table `employers`
 --
 ALTER TABLE `employers`
   ADD PRIMARY KEY (`employer_id`);
+
+--
+-- Indexes for table `installments`
+--
+ALTER TABLE `installments`
+  ADD PRIMARY KEY (`installment_id`),
+  ADD KEY `idx_installment_type_contract_id` (`installment_relations`,`contract_id`) USING BTREE,
+  ADD KEY `idx_installment_no` (`installment_no`) USING BTREE;
 
 --
 -- Indexes for table `jobs`
@@ -318,10 +407,22 @@ ALTER TABLE `contractors`
   MODIFY `contractor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
+-- AUTO_INCREMENT for table `contracts`
+--
+ALTER TABLE `contracts`
+  MODIFY `contract_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `employers`
 --
 ALTER TABLE `employers`
-  MODIFY `employer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `employer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `installments`
+--
+ALTER TABLE `installments`
+  MODIFY `installment_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `jobs`
