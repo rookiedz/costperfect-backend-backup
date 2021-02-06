@@ -24,7 +24,7 @@ func NewContract() Contract {
 func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 	var input models.Contract
 	var mdbContract mariadb.Contract
-	var mdbInstallment mariadb.Installment
+	//var mdbInstallment mariadb.Installment
 	var ok bool
 	var err error
 	var lastID int64
@@ -50,19 +50,19 @@ func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 		JSON(w, http.StatusOK, Err(err))
 		return
 	}
-	mdbInstallment = mariadb.NewInstallment()
+	//mdbInstallment = mariadb.NewInstallment()
 	//Create Payment Installment by contract
-	for no, value := range input.PaymentInstallmentValues {
-		var mInstallment models.Installment
-		mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "payment"}
-		mdbInstallment.Create(mInstallment)
-	}
+	// for no, value := range input.PaymentInstallmentValues {
+	// 	var mInstallment models.Installment
+	// 	mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "payment"}
+	// 	mdbInstallment.Create(mInstallment)
+	// }
 	//Create Advance Payment Installment by contract
-	for no, value := range input.AdvancePaymentInstallmentValues {
-		var mInstallment models.Installment
-		mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "advance"}
-		mdbInstallment.Create(mInstallment)
-	}
+	// for no, value := range input.AdvancePaymentInstallmentValues {
+	// 	var mInstallment models.Installment
+	// 	mInstallment = models.Installment{No: int64(no), Value: value, ContractID: lastID, Relations: "advance"}
+	// 	mdbInstallment.Create(mInstallment)
+	// }
 	res = make(map[string]int64)
 	res["last_id"] = lastID
 	JSON(w, http.StatusOK, Success(res))

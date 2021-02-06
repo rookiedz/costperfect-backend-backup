@@ -39,9 +39,7 @@ func NewContract() Contract {
 		"contract_delivery_date",
 		"contract_warranty_days",
 		"contract_payment_method",
-		"contract_payment_percentage",
-		"contract_payment_amout",
-		"contract_payment_installments",
+		"contract_payment_period",
 		"contract_advance_payment_method",
 		"contract_advance_payment_percentage",
 		"contract_advance_payment_amout",
@@ -70,7 +68,7 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (%s, contract_created_at, contract_updated_at)VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, c.TableName, c.InsertColumn))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (%s, contract_created_at, contract_updated_at)VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, c.TableName, c.InsertColumn))
 	if err != nil {
 		return 0, nil
 	}
@@ -81,8 +79,7 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 		contract.JobID, contract.Name, contract.ContractNo, contract.LetterOfIntentNo, contract.Value,
 		contract.Tax, contract.TaxValue, contract.NetValue, contract.SigningDate,
 		contract.BeginDate, contract.EndDate, contract.DeliveryDate, contract.WarrantyDays,
-		contract.PaymentMethod, contract.PaymentPercentage, contract.PaymentAmout,
-		contract.PaymentInstallments, contract.AdvancePaymentMethod, contract.AdvancePaymentPercentage,
+		contract.PaymentMethod, contract.PaymentPeriod, contract.AdvancePaymentMethod, contract.AdvancePaymentPercentage,
 		contract.AdvancePaymentAmout, contract.AdvancePaymentInstallments, contract.DeductMethod,
 		contract.DeductPercentage, contract.WarrantyMethod, contract.WarrantyPercentage,
 		contract.PerformanceBondPercentage, contract.RetentionMoneyMethod, contract.RetentionMoneyPercentage,
@@ -223,8 +220,7 @@ func (c Contract) FindByID(id int64) (models.Contract, error) {
 		&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 		&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 		&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-		&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
-		&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+		&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
 		&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
 		&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
 		&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
@@ -273,8 +269,7 @@ func (c Contract) FindAll(setters ...Option) ([]models.Contract, error) {
 			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
-			&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
 			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
 			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
 			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
@@ -351,8 +346,7 @@ func (c Contract) FindAllByProject(id int64, setters ...Option) ([]models.Contra
 			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
 			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
 			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-			&mContract.PaymentMethod, &mContract.PaymentPercentage, &mContract.PaymentAmout,
-			&mContract.PaymentInstallments, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
+			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
 			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
 			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
 			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,

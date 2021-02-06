@@ -22,10 +22,7 @@ type Contract struct {
 	DeliveryDate                    time.Time `json:"delivery_date"`
 	WarrantyDays                    int64     `json:"warranty_days"`  //days จำนวนวัน
 	PaymentMethod                   string    `json:"payment_method"` // WORKINGS, INSTALLMENT
-	PaymentPercentage               float64   `json:"payment_percentage"`
-	PaymentAmout                    float64   `json:"payment_amout"`
-	PaymentInstallments             int64     `json:"payment_installments"`
-	PaymentInstallmentValues        []float64 `json:"payment_installment_values"`
+	PaymentPeriod                   int64     `json:"payment_period"`
 	AdvancePaymentMethod            string    `json:"advance_payment_method"` // WORKINGS, INSTALLMENT
 	AdvancePaymentPercentage        float64   `json:"advance_payment_percentage"`
 	AdvancePaymentAmout             float64   `json:"advance_payment_amout"`
@@ -61,10 +58,7 @@ type PContract struct {
 	DeliveryDate                    *time.Time `json:"delivery_date"`
 	WarrantyDays                    *int64     `json:"warranty_days"`  //days จำนวนวัน
 	PaymentMethod                   *string    `json:"payment_method"` // WORKINGS, INSTALLMENT
-	PaymentPercentage               *float64   `json:"payment_percentage"`
-	PaymentAmout                    *float64   `json:"payment_amout"`
-	PaymentInstallments             *int64     `json:"payment_installments"`
-	PaymentInstallmentValues        []*float64 `json:"payment_installment_values"`
+	PaymentPeriod                   *int64     `json:"payment_period"`
 	AdvancePaymentMethod            *string    `json:"advance_payment_method"` // WORKINGS, INSTALLMENT
 	AdvancePaymentPercentage        *float64   `json:"advance_payment_percentage"`
 	AdvancePaymentAmout             *float64   `json:"advance_payment_amout"`
@@ -134,14 +128,8 @@ func (pc PContract) Match(contract *Contract) {
 	if pc.PaymentMethod != nil {
 		contract.PaymentMethod = *pc.PaymentMethod
 	}
-	if pc.PaymentPercentage != nil {
-		contract.PaymentPercentage = *pc.PaymentPercentage
-	}
-	if pc.PaymentAmout != nil {
-		contract.PaymentAmout = *pc.PaymentAmout
-	}
-	if pc.PaymentInstallments != nil {
-		contract.PaymentInstallments = *pc.PaymentInstallments
+	if pc.PaymentPeriod != nil {
+		contract.PaymentPeriod = *pc.PaymentPeriod
 	}
 	if pc.AdvancePaymentMethod != nil {
 		contract.AdvancePaymentMethod = *pc.PaymentMethod
