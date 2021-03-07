@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 //Contract ...
 type Contract struct {
 	Model
@@ -16,19 +14,24 @@ type Contract struct {
 	Tax                             float64   `json:"tax"`
 	TaxValue                        float64   `json:"tax_value"`
 	NetValue                        float64   `json:"net_value"`
-	SigningDate                     time.Time `json:"signing_date"`
-	BeginDate                       time.Time `json:"begin_date"`
-	EndDate                         time.Time `json:"end_date"`
-	DeliveryDate                    time.Time `json:"delivery_date"`
+	SigningDate                     JSONDate  `json:"signing_date"`
+	BeginDate                       JSONDate  `json:"begin_date"`
+	EndDate                         JSONDate  `json:"end_date"`
+	DeliveryDate                    JSONDate  `json:"deliver_date"`
 	WarrantyDays                    int64     `json:"warranty_days"`  //days จำนวนวัน
 	PaymentMethod                   string    `json:"payment_method"` // WORKINGS, INSTALLMENT
 	PaymentPeriod                   int64     `json:"payment_period"`
+	PaymentInstallments             float64   `json:"payment_installments"`
+	PaymentLastInstallments         float64   `json:"payment_last_installments"`
 	AdvancePaymentMethod            string    `json:"advance_payment_method"` // WORKINGS, INSTALLMENT
+	AdvancePaymentTotal             float64   `json:"advance_payment_total"`
+	AdvancePaymentValue             float64   `json:"advance_payment_value"`
 	AdvancePaymentPercentage        float64   `json:"advance_payment_percentage"`
 	AdvancePaymentAmout             float64   `json:"advance_payment_amout"`
 	AdvancePaymentInstallments      int64     `json:"advance_payment_installments"`
 	AdvancePaymentInstallmentValues []float64 `json:"advance_payment_installment_values"`
 	DeductMethod                    string    `json:"deduct_method"` //BEFORE, AFTER
+	DeductValue                     float64   `json:"deduct_value"`
 	DeductPercentage                float64   `json:"deduct_percentage"`
 	WarrantyMethod                  string    `json:"warranty_method"` //BEFORE, AFTER
 	WarrantyPercentage              float64   `json:"warranty_percentage"`
@@ -52,10 +55,10 @@ type PContract struct {
 	Tax                             *float64   `json:"tax"`
 	TaxValue                        *float64   `json:"tax_value"`
 	NetValue                        *float64   `json:"net_value"`
-	SigningDate                     *time.Time `json:"signing_date"`
-	BeginDate                       *time.Time `json:"begin_date"`
-	EndDate                         *time.Time `json:"end_date"`
-	DeliveryDate                    *time.Time `json:"delivery_date"`
+	SigningDate                     *JSONDate  `json:"signing_date"`
+	BeginDate                       *JSONDate  `json:"begin_date"`
+	EndDate                         *JSONDate  `json:"end_date"`
+	DeliveryDate                    *JSONDate  `json:"delivery_date"`
 	WarrantyDays                    *int64     `json:"warranty_days"`  //days จำนวนวัน
 	PaymentMethod                   *string    `json:"payment_method"` // WORKINGS, INSTALLMENT
 	PaymentPeriod                   *int64     `json:"payment_period"`

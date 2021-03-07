@@ -29,7 +29,6 @@ func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var lastID int64
 	var res map[string]int64
-
 	if err = json.NewDecoder(r.Body).Decode(&input); err != nil {
 		if err == io.EOF {
 			JSON(w, http.StatusOK, Failure(err))
