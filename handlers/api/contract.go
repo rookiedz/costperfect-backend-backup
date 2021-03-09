@@ -69,7 +69,7 @@ func (c Contract) Create(w http.ResponseWriter, r *http.Request) {
 
 //Update ...
 func (c Contract) Update(w http.ResponseWriter, r *http.Request) {
-	var input models.PContract
+	var input models.ContractPointer
 	var mContract models.Contract
 	var mdbContract mariadb.Contract
 	var err error

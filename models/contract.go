@@ -3,171 +3,169 @@ package models
 //Contract ...
 type Contract struct {
 	Model
-	ProjectID                       int64     `json:"project_id"`
-	ContractorID                    int64     `json:"contractor_id"`
-	EmployerID                      int64     `json:"employer_id"`
-	JobID                           int64     `json:"job_id"`
-	Name                            string    `json:"name"`
-	ContractNo                      string    `json:"contract_no"`
-	LetterOfIntentNo                string    `json:"loi_no"`
-	Value                           float64   `json:"value"`
-	Tax                             float64   `json:"tax"`
-	TaxValue                        float64   `json:"tax_value"`
-	NetValue                        float64   `json:"net_value"`
-	SigningDate                     JSONDate  `json:"signing_date"`
-	BeginDate                       JSONDate  `json:"begin_date"`
-	EndDate                         JSONDate  `json:"end_date"`
-	DeliveryDate                    JSONDate  `json:"deliver_date"`
-	WarrantyDays                    int64     `json:"warranty_days"`  //days จำนวนวัน
-	PaymentMethod                   string    `json:"payment_method"` // WORKINGS, INSTALLMENT
-	PaymentPeriod                   int64     `json:"payment_period"`
-	PaymentInstallments             float64   `json:"payment_installments"`
-	PaymentLastInstallments         float64   `json:"payment_last_installments"`
-	AdvancePaymentMethod            string    `json:"advance_payment_method"` // WORKINGS, INSTALLMENT
-	AdvancePaymentTotal             float64   `json:"advance_payment_total"`
-	AdvancePaymentValue             float64   `json:"advance_payment_value"`
-	AdvancePaymentPercentage        float64   `json:"advance_payment_percentage"`
-	AdvancePaymentAmout             float64   `json:"advance_payment_amout"`
-	AdvancePaymentInstallments      int64     `json:"advance_payment_installments"`
-	AdvancePaymentInstallmentValues []float64 `json:"advance_payment_installment_values"`
-	DeductMethod                    string    `json:"deduct_method"` //BEFORE, AFTER
-	DeductValue                     float64   `json:"deduct_value"`
-	DeductPercentage                float64   `json:"deduct_percentage"`
-	WarrantyMethod                  string    `json:"warranty_method"` //BEFORE, AFTER
-	WarrantyPercentage              float64   `json:"warranty_percentage"`
-	PerformanceBondPercentage       float64   `json:"performance_bond_percentage"` //หลักประกันการปฏิบัติงานตามสัญญา
-	RetentionMoneyMethod            string    `json:"retention_money_method"`      //BEFORE, AFTER เงินประกันผลงาน
-	RetentionMoneyPercentage        float64   `json:"retention_money_percentage"`
-	Note                            string    `json:"note"`
-	Attachments                     []string  `json:"attachments"`
+	AdvancePaymentMethod      string   `json:"advance_payment_method"`
+	AdvancePaymentTotal       float64  `json:"advance_payment_total,string"`
+	AdvancePaymentValue       float64  `json:"advance_payment_value,string"`
+	BeginDate                 JSONDate `json:"begin_date"`
+	BondNo                    string   `json:"bond_no"`
+	BondBank                  string   `json:"bond_bank"`
+	BondDate                  JSONDate `json:"bond_date"`
+	BondValue                 float64  `json:"bond_value,string"`
+	ContractNo                string   `json:"contract_no"`
+	ContractorID              int64    `json:"contractor_id"`
+	DeductMethod              string   `json:"deduct_method"`
+	DeductPercentage          string   `json:"deduct_percentage"`
+	DeliverDate               JSONDate `json:"deliver_date"`
+	EmployerID                int64    `json:"employer_id"`
+	EndDate                   JSONDate `json:"end_date"`
+	JobID                     int64    `json:"job_id"`
+	LOINo                     string   `json:"loi_no"`
+	Name                      string   `json:"name"`
+	NetValue                  string   `json:"net_value,string"`
+	Note                      string   `json:"note"`
+	PaymentInstallments       int64    `json:"payment_installments"`
+	PaymentLastInstallments   int64    `json:"payment_last_installments"`
+	PaymentMethod             string   `json:"payment_method"`
+	PaymentPeriod             int64    `json:"payment_period"`
+	PerformanceBondPercentage int64    `json:"performance_bond_percentage"`
+	ProjectID                 int64    `json:"project_id"`
+	RetentionMoneyMethod      string   `json:"retention_money_method"`
+	RetentionMoneyPercentage  float64  `json:"retention_money_percentage,string"`
+	SigningDate               JSONDate `json:"singing_date"`
+	Tax                       float64  `json:"tax,string"`
+	TaxValue                  float64  `json:"tax_value,string"`
+	Value                     float64  `json:"value,string"`
 }
 
-//PContract ...
-type PContract struct {
-	ProjectID                       *int64     `json:"project_id"`
-	ContractorID                    *int64     `json:"contractor_id"`
-	EmployerID                      *int64     `json:"employer_id"`
-	JobID                           *int64     `json:"job_id"`
-	Name                            *string    `json:"name"`
-	ContractNo                      *string    `json:"contract_no"`
-	LetterOfIntentNo                *string    `json:"loi_no"`
-	Value                           *float64   `json:"value"`
-	Tax                             *float64   `json:"tax"`
-	TaxValue                        *float64   `json:"tax_value"`
-	NetValue                        *float64   `json:"net_value"`
-	SigningDate                     *JSONDate  `json:"signing_date"`
-	BeginDate                       *JSONDate  `json:"begin_date"`
-	EndDate                         *JSONDate  `json:"end_date"`
-	DeliveryDate                    *JSONDate  `json:"delivery_date"`
-	WarrantyDays                    *int64     `json:"warranty_days"`  //days จำนวนวัน
-	PaymentMethod                   *string    `json:"payment_method"` // WORKINGS, INSTALLMENT
-	PaymentPeriod                   *int64     `json:"payment_period"`
-	AdvancePaymentMethod            *string    `json:"advance_payment_method"` // WORKINGS, INSTALLMENT
-	AdvancePaymentPercentage        *float64   `json:"advance_payment_percentage"`
-	AdvancePaymentAmout             *float64   `json:"advance_payment_amout"`
-	AdvancePaymentInstallments      *int64     `json:"advance_payment_installments"`
-	AdvancePaymentInstallmentValues []*float64 `json:"advance_payment_installment_values"`
-	DeductMethod                    *string    `json:"deduct_method"` //BEFORE, AFTER
-	DeductPercentage                *float64   `json:"deduct_percentage"`
-	WarrantyMethod                  *string    `json:"warranty_method"` //BEFORE, AFTER
-	WarrantyPercentage              *float64   `json:"warranty_percentage"`
-	PerformanceBondPercentage       *float64   `json:"performance_bond_percentage"` //หลักประกันการปฏิบัติงานตามสัญญา
-	RetentionMoneyMethod            *string    `json:"retention_money_method"`      //BEFORE, AFTER เงินประกันผลงาน
-	RetentionMoneyPercentage        *float64   `json:"retention_money_percentage"`
-	Note                            *string    `json:"note"`
-	Attachments                     []*string  `json:"attachments"`
+//ContractPointer ...
+type ContractPointer struct {
+	AdvancePaymentMethod      *string   `json:"advance_payment_method"`
+	AdvancePaymentTotal       *float64  `json:"advance_payment_total,string"`
+	AdvancePaymentValue       *float64  `json:"advance_payment_value,string"`
+	BeginDate                 *JSONDate `json:"begin_date"`
+	BondNo                    *string   `json:"bond_no"`
+	BondBank                  *string   `json:"bond_bank"`
+	BondDate                  *JSONDate `json:"bond_date"`
+	BondValue                 *float64  `json:"bond_value,string"`
+	ContractNo                *string   `json:"contract_no"`
+	ContractorID              *int64    `json:"contractor_id"`
+	DeductMethod              *string   `json:"deduct_method"`
+	DeductPercentage          *string   `json:"deduct_percentage"`
+	DeliverDate               *JSONDate `json:"deliver_date"`
+	EmployerID                *int64    `json:"employer_id"`
+	EndDate                   *JSONDate `json:"end_date"`
+	JobID                     *int64    `json:"job_id"`
+	LOINo                     *string   `json:"loi_no"`
+	Name                      *string   `json:"name"`
+	NetValue                  *string   `json:"net_value,string"`
+	Note                      *string   `json:"note"`
+	PaymentInstallments       *int64    `json:"payment_installments"`
+	PaymentLastInstallments   *int64    `json:"payment_last_installments"`
+	PaymentMethod             *string   `json:"payment_method"`
+	PaymentPeriod             *int64    `json:"payment_period"`
+	PerformanceBondPercentage *int64    `json:"performance_bond_percentage"`
+	ProjectID                 *int64    `json:"project_id"`
+	RetentionMoneyMethod      *string   `json:"retention_money_method"`
+	RetentionMoneyPercentage  *float64  `json:"retention_money_percentage,string"`
+	SigningDate               *JSONDate `json:"singing_date"`
+	Tax                       *float64  `json:"tax,string"`
+	TaxValue                  *float64  `json:"tax_value,string"`
+	Value                     *float64  `json:"value,string"`
 }
 
 //Match ...
-func (pc PContract) Match(contract *Contract) {
-	if pc.ProjectID != nil {
-		contract.ProjectID = *pc.ProjectID
+func (cp ContractPointer) Match(contract *Contract) {
+	if cp.AdvancePaymentMethod != nil {
+		contract.AdvancePaymentMethod = *cp.AdvancePaymentMethod
 	}
-	if pc.ContractorID != nil {
-		contract.ContractorID = *pc.ContractorID
+	if cp.AdvancePaymentValue != nil {
+		contract.AdvancePaymentValue = *cp.AdvancePaymentValue
 	}
-	if pc.EmployerID != nil {
-		contract.EmployerID = *pc.EmployerID
+	if cp.AdvancePaymentTotal != nil {
+		contract.AdvancePaymentTotal = *cp.AdvancePaymentTotal
 	}
-	if pc.JobID != nil {
-		contract.JobID = *pc.JobID
+	if cp.BeginDate != nil {
+		contract.BeginDate = *cp.BeginDate
 	}
-	if pc.Name != nil {
-		contract.Name = *pc.Name
+	if cp.BondNo != nil {
+		contract.BondNo = *cp.BondNo
 	}
-	if pc.ContractNo != nil {
-		contract.ContractNo = *pc.ContractNo
+	if cp.BondBank != nil {
+		contract.BondBank = *cp.BondBank
 	}
-	if pc.LetterOfIntentNo != nil {
-		contract.LetterOfIntentNo = *pc.LetterOfIntentNo
+	if cp.BondDate != nil {
+		contract.BondDate = *cp.BondDate
 	}
-	if pc.Value != nil {
-		contract.Value = *pc.Value
+	if cp.ContractNo != nil {
+		contract.ContractNo = *cp.ContractNo
 	}
-	if pc.Tax != nil {
-		contract.Tax = *pc.Tax
+	if cp.ContractorID != nil {
+		contract.ContractorID = *cp.ContractorID
 	}
-	if pc.TaxValue != nil {
-		contract.TaxValue = *pc.TaxValue
+	if cp.DeductMethod != nil {
+		contract.DeductMethod = *cp.DeductMethod
 	}
-	if pc.NetValue != nil {
-		contract.NetValue = *pc.NetValue
+	if cp.DeductPercentage != nil {
+		contract.DeductPercentage = *cp.DeductPercentage
 	}
-	if pc.SigningDate != nil {
-		contract.SigningDate = *pc.SigningDate
+	if cp.DeliverDate != nil {
+		contract.DeliverDate = *cp.DeliverDate
 	}
-	if pc.BeginDate != nil {
-		contract.BeginDate = *pc.BeginDate
+	if cp.EmployerID != nil {
+		contract.EmployerID = *cp.EmployerID
 	}
-	if pc.EndDate != nil {
-		contract.EndDate = *pc.EndDate
+	if cp.EndDate != nil {
+		contract.EndDate = *cp.EndDate
 	}
-	if pc.DeliveryDate != nil {
-		contract.DeliveryDate = *pc.DeliveryDate
+	if cp.JobID != nil {
+		contract.JobID = *cp.JobID
 	}
-	if pc.WarrantyDays != nil {
-		contract.WarrantyDays = *pc.WarrantyDays
+	if cp.LOINo != nil {
+		contract.LOINo = *cp.LOINo
 	}
-	if pc.PaymentMethod != nil {
-		contract.PaymentMethod = *pc.PaymentMethod
+	if cp.Name != nil {
+		contract.Name = *cp.Name
 	}
-	if pc.PaymentPeriod != nil {
-		contract.PaymentPeriod = *pc.PaymentPeriod
+	if cp.NetValue != nil {
+		contract.NetValue = *cp.NetValue
 	}
-	if pc.AdvancePaymentMethod != nil {
-		contract.AdvancePaymentMethod = *pc.PaymentMethod
+	if cp.Note != nil {
+		contract.Note = *cp.Note
 	}
-	if pc.AdvancePaymentPercentage != nil {
-		contract.AdvancePaymentPercentage = *pc.AdvancePaymentPercentage
+	if cp.PaymentInstallments != nil {
+		contract.PaymentInstallments = *cp.PaymentInstallments
 	}
-	if pc.AdvancePaymentAmout != nil {
-		contract.AdvancePaymentAmout = *pc.AdvancePaymentAmout
+	if cp.PaymentLastInstallments != nil {
+		contract.PaymentLastInstallments = *cp.PaymentLastInstallments
 	}
-	if pc.AdvancePaymentInstallments != nil {
-		contract.AdvancePaymentInstallments = *pc.AdvancePaymentInstallments
+	if cp.PaymentMethod != nil {
+		contract.PaymentMethod = *cp.PaymentMethod
 	}
-	if pc.DeductMethod != nil {
-		contract.DeductMethod = *pc.DeductMethod
+	if cp.PaymentPeriod != nil {
+		contract.PaymentPeriod = *cp.PaymentPeriod
 	}
-	if pc.DeductPercentage != nil {
-		contract.DeductPercentage = *pc.DeductPercentage
+	if cp.PerformanceBondPercentage != nil {
+		contract.PerformanceBondPercentage = *cp.PerformanceBondPercentage
 	}
-	if pc.WarrantyMethod != nil {
-		contract.WarrantyMethod = *pc.WarrantyMethod
+	if cp.ProjectID != nil {
+		contract.ProjectID = *cp.ProjectID
 	}
-	if pc.WarrantyPercentage != nil {
-		contract.WarrantyPercentage = *pc.WarrantyPercentage
+	if cp.RetentionMoneyMethod != nil {
+		contract.RetentionMoneyMethod = *cp.RetentionMoneyMethod
 	}
-	if pc.PerformanceBondPercentage != nil {
-		contract.PerformanceBondPercentage = *pc.PerformanceBondPercentage
+	if cp.RetentionMoneyPercentage != nil {
+		contract.RetentionMoneyPercentage = *cp.RetentionMoneyPercentage
 	}
-	if pc.RetentionMoneyMethod != nil {
-		contract.RetentionMoneyMethod = *pc.RetentionMoneyMethod
+	if cp.SigningDate != nil {
+		contract.SigningDate = *cp.SigningDate
 	}
-	if pc.RetentionMoneyPercentage != nil {
-		contract.RetentionMoneyPercentage = *pc.RetentionMoneyPercentage
+	if cp.Tax != nil {
+		contract.Tax = *cp.Tax
 	}
-	if pc.Note != nil {
-		contract.Note = *pc.Note
+	if cp.TaxValue != nil {
+		contract.TaxValue = *cp.TaxValue
+	}
+	if cp.Value != nil {
+		contract.Value = *cp.TaxValue
 	}
 }

@@ -43,6 +43,7 @@ func InitialRouter() http.Handler {
 		r.Mount("/owners", api.OwnerAPIRouter())
 		r.Mount("/projects", api.ProjectAPIRouter())
 		r.Mount("/users", api.UserAPIRouter())
+		r.Mount("/test", api.TestAPIRouter())
 		//r.Mount("/authors", api.AuthorAPI())
 	})
 	r.Mount("/auth", AuthRouter())

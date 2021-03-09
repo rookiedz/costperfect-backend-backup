@@ -1,7 +1,7 @@
 package models
 
 import (
-	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -22,7 +22,13 @@ func (d *JSONDate) UnmarshalJSON(b []byte) error {
 
 //MarshalJSON ...
 func (d JSONDate) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d)
+	return []byte(d.String()), nil
+}
+
+//String ...
+func (d *JSONDate) String() string {
+	t := time.Time(*d)
+	return fmt.Sprintf("%q", t.Format("2006-01-02"))
 }
 
 //Format ...

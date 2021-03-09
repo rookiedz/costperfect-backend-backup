@@ -22,37 +22,38 @@ func NewContract() Contract {
 	var columns []string
 	columns = []string{
 		"contract_id",
-		"project_id",
-		"contractor_id",
-		"employer_id",
-		"job_id",
-		"contract_name",
-		"contract_no",
-		"contract_loi_no",
-		"contract_value",
-		"contract_tax",
-		"contract_tax_value",
-		"contract_net_value",
-		"contract_signing_date",
-		"contract_begin_date",
-		"contract_end_date",
-		"contract_delivery_date",
-		"contract_warranty_days",
-		"contract_payment_method",
-		"contract_payment_period",
 		"contract_advance_payment_method",
-		"contract_advance_payment_percentage",
-		"contract_advance_payment_amout",
-		"contract_advance_payment_installments",
+		"contract_advance_payment_total",
+		"contract_advance_payment_value",
+		"contract_begin_date",
+		"contract_bond_no",
+		"contract_bond_bank",
+		"contract_bond_date",
+		"contract_bond_value",
+		"contract_contract_no",
+		"contract_contractor_id",
 		"contract_deduct_method",
 		"contract_deduct_percentage",
-		"contract_warranty_method",
-		"contract_warranty_percentage",
+		"contract_deliver_date",
+		"contract_employer_id",
+		"contract_end_date",
+		"contract_job_id",
+		"contract_loi_no",
+		"contract_name",
+		"contract_net_value",
+		"contract_note",
+		"contract_payment_installments",
+		"contract_payment_last_installments",
+		"contract_payment_method",
+		"contract_payment_period",
 		"contract_performance_bond_percentage",
+		"contract_project_id",
 		"contract_retention_money_method",
 		"contract_retention_money_percentage",
-		"contract_note",
-	}
+		"contract_singing_date",
+		"contract_tax",
+		"contract_tax_value",
+		"contract_value"}
 	return Contract{TableName: "contracts", Columns: columns, InsertColumn: strings.Join(columns[1:], ","), QueryColumn: strings.Join(columns[:], ",")}
 }
 
@@ -68,22 +69,20 @@ func (c Contract) Create(contract models.Contract) (int64, error) {
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (%s, contract_created_at, contract_updated_at)VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, c.TableName, c.InsertColumn))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`INSERT INTO %s (%s, contract_created_at, contract_updated_at)VALUES()`, c.TableName, c.InsertColumn))
 	if err != nil {
 		return 0, nil
 	}
 	defer stmt.Close()
 
 	cds = CurrentDatetimeString()
-	res, err = stmt.ExecContext(ctx, contract.ProjectID, contract.ContractorID, contract.EmployerID,
-		contract.JobID, contract.Name, contract.ContractNo, contract.LetterOfIntentNo, contract.Value,
-		contract.Tax, contract.TaxValue, contract.NetValue, contract.SigningDate,
-		contract.BeginDate, contract.EndDate, contract.DeliveryDate, contract.WarrantyDays,
-		contract.PaymentMethod, contract.PaymentPeriod, contract.AdvancePaymentMethod, contract.AdvancePaymentPercentage,
-		contract.AdvancePaymentAmout, contract.AdvancePaymentInstallments, contract.DeductMethod,
-		contract.DeductPercentage, contract.WarrantyMethod, contract.WarrantyPercentage,
-		contract.PerformanceBondPercentage, contract.RetentionMoneyMethod, contract.RetentionMoneyPercentage,
-		contract.Note, cds, cds)
+	res, err = stmt.ExecContext(ctx, contract.AdvancePaymentMethod, contract.AdvancePaymentTotal, contract.AdvancePaymentValue,
+		contract.BeginDate, contract.BondNo, contract.BondDate, contract.BondValue, contract.ContractNo, contract.ContractorID,
+		contract.DeductMethod, contract.DeductPercentage, contract.DeliverDate, contract.EmployerID, contract.EndDate,
+		contract.JobID, contract.LOINo, contract.Name, contract.NetValue, contract.Note, contract.PaymentInstallments,
+		contract.PaymentLastInstallments, contract.PaymentMethod, contract.PaymentPeriod, contract.PerformanceBondPercentage,
+		contract.ProjectID, contract.RetentionMoneyMethod, contract.RetentionMoneyPercentage, contract.SigningDate,
+		contract.Tax, contract.TaxValue, contract.Value, cds)
 	if err != nil {
 		return 0, err
 	}
@@ -99,13 +98,29 @@ func (c Contract) Update(id int64, contract models.Contract) error {
 	var cds string
 	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contract_updated_at = ? WHERE contract_id = ?`, c.TableName))
+	stmt, err = db.PrepareContext(ctx, fmt.Sprintf(`UPDATE %s SET contract_advance_payment_method = ?,
+	contract_advance_payment_total = ?, contract_advance_payment_value = ?, contract_begin_date = ?,
+	contract_bond_no = ?, contract_bond_bank = ?, contract_bond_date = ?, contract_bond_value = ?,
+	contract_contract_no = ?, contract_contractor_id = ?, contract_deduct_method = ?, contract_deduct_percentage = ?,
+	contract_deliver_date = ?, contract_employer_id = ?, contract_end_date = ?, contract_job_id = ?,
+	contract_loi_no = ?, contract_name = ?, contract_net_value = ?, contract_note = ?,
+	contract_payment_installments = ?, contract_payment_last_installments = ?, contract_payment_method = ?,
+	contract_payment_period = ?, contract_performance_bond_percentage = ?, contract_project_id = ?,
+	contract_retention_money_method = ?, contract_retention_money_percentage = ?, contract_singing_date = ?,
+	contract_tax = ?, contract_tax_value = ?, contract_value = ?, contract_updated_at = ? 
+	WHERE contract_id = ?`, c.TableName))
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	cds = CurrentDatetimeString()
-	if _, err = stmt.ExecContext(ctx, cds); err != nil {
+	if _, err = stmt.ExecContext(ctx, contract.AdvancePaymentMethod, contract.AdvancePaymentTotal, contract.AdvancePaymentValue,
+		contract.BeginDate, contract.BondNo, contract.BondBank, contract.BondDate, contract.BondValue, contract.ContractNo,
+		contract.ContractorID, contract.DeductMethod, contract.DeductPercentage, contract.DeliverDate, contract.EmployerID,
+		contract.EndDate, contract.JobID, contract.LOINo, contract.Name, contract.NetValue, contract.Note,
+		contract.PaymentInstallments, contract.PaymentLastInstallments, contract.PaymentMethod, contract.PaymentPeriod,
+		contract.PerformanceBondPercentage, contract.ProjectID, contract.RetentionMoneyMethod, contract.RetentionMoneyPercentage,
+		contract.SigningDate, contract.Tax, contract.TaxValue, contract.Value, cds); err != nil {
 		return err
 	}
 	return nil
@@ -216,15 +231,13 @@ func (c Contract) FindByID(id int64) (models.Contract, error) {
 	}
 	defer stmt.Close()
 
-	if err = stmt.QueryRowContext(ctx, id).Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-		&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
-		&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
-		&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-		&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
-		&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
-		&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
-		&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
-		&mContract.Note); err != nil {
+	if err = stmt.QueryRowContext(ctx, id).Scan(&mContract.ID, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentTotal, &mContract.AdvancePaymentValue,
+		&mContract.BeginDate, &mContract.BondNo, &mContract.BondBank, &mContract.BondDate, &mContract.BondValue,
+		&mContract.ContractNo, &mContract.ContractorID, &mContract.DeductMethod, &mContract.DeductPercentage, &mContract.DeliverDate,
+		&mContract.EmployerID, &mContract.EndDate, &mContract.JobID, &mContract.LOINo, &mContract.Name, &mContract.NetValue,
+		&mContract.Note, &mContract.PaymentInstallments, &mContract.PaymentLastInstallments, &mContract.PaymentMethod,
+		&mContract.PaymentPeriod, &mContract.PerformanceBondPercentage, &mContract.SigningDate, &mContract.Tax,
+		&mContract.TaxValue, &mContract.Value); err != nil {
 		if err == sql.ErrNoRows {
 			return mContract, nil
 		}
@@ -265,15 +278,14 @@ func (c Contract) FindAll(setters ...Option) ([]models.Contract, error) {
 
 	for rows.Next() {
 		var mContract models.Contract
-		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
-			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
-			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
-			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
-			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
-			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
-			&mContract.Note); err != nil {
+		if err = rows.Scan(&mContract.ID, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentTotal, &mContract.AdvancePaymentValue,
+			&mContract.BeginDate, &mContract.BondNo, &mContract.BondBank, &mContract.BondDate, &mContract.BondValue,
+			&mContract.ContractNo, &mContract.ContractorID, &mContract.DeductMethod, &mContract.DeductPercentage,
+			&mContract.DeliverDate, &mContract.EmployerID, &mContract.EndDate, &mContract.JobID, &mContract.LOINo, &mContract.Name,
+			&mContract.NetValue, &mContract.Note, &mContract.PaymentInstallments, &mContract.PaymentLastInstallments,
+			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.PerformanceBondPercentage, &mContract.ProjectID,
+			&mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage, &mContract.SigningDate,
+			&mContract.Tax, &mContract.TaxValue, &mContract.Value); err != nil {
 			return mContracts, err
 		}
 		mContracts = append(mContracts, mContract)
@@ -342,15 +354,14 @@ func (c Contract) FindAllByProject(id int64, setters ...Option) ([]models.Contra
 	defer rows.Close()
 	for rows.Next() {
 		var mContract models.Contract
-		if err = rows.Scan(&mContract.ID, &mContract.ProjectID, &mContract.ContractorID,
-			&mContract.EmployerID, &mContract.JobID, &mContract.Name, &mContract.ContractNo, &mContract.LetterOfIntentNo,
-			&mContract.Value, &mContract.Tax, &mContract.TaxValue, &mContract.NetValue, &mContract.SigningDate,
-			&mContract.BeginDate, &mContract.EndDate, &mContract.DeliveryDate, &mContract.WarrantyDays,
-			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentPercentage,
-			&mContract.AdvancePaymentAmout, &mContract.AdvancePaymentInstallments, &mContract.DeductMethod,
-			&mContract.DeductPercentage, &mContract.WarrantyMethod, &mContract.WarrantyPercentage,
-			&mContract.PerformanceBondPercentage, &mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage,
-			&mContract.Note); err != nil {
+		if err = rows.Scan(&mContract.ID, &mContract.AdvancePaymentMethod, &mContract.AdvancePaymentTotal, &mContract.AdvancePaymentValue,
+			&mContract.BeginDate, &mContract.BondNo, &mContract.BondBank, &mContract.BondDate, &mContract.BondValue,
+			&mContract.ContractNo, &mContract.ContractorID, &mContract.DeductMethod, &mContract.DeductPercentage,
+			&mContract.DeliverDate, &mContract.EmployerID, &mContract.EndDate, &mContract.JobID, &mContract.LOINo, &mContract.Name,
+			&mContract.NetValue, &mContract.Note, &mContract.PaymentInstallments, &mContract.PaymentLastInstallments,
+			&mContract.PaymentMethod, &mContract.PaymentPeriod, &mContract.PerformanceBondPercentage, &mContract.ProjectID,
+			&mContract.RetentionMoneyMethod, &mContract.RetentionMoneyPercentage, &mContract.SigningDate,
+			&mContract.Tax, &mContract.TaxValue, &mContract.Value); err != nil {
 			return mContracts, err
 		}
 		mContracts = append(mContracts, mContract)
